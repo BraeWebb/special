@@ -1,0 +1,76 @@
+version: '3'
+services:
+  db:
+    container_name: psql
+    restart: always
+    image: psql
+    build:
+      context: ./db
+    volumes:
+      - ./db/data/:/var/lib/postgresql/data
+      - ./db/config.conf:/etc/postgresql.conf
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: bVawU6etXvWwQgsR
+      POSTGRES_DATABASE: special
+    expose:
+      - 5432
+    ports:
+      - 5432:5432
+    networks:
+      - psql-pgql
+  graphql:
+    container_name: graphql
+    restart: always
+    image: graphile/postgraphile
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:bVawU6etXvWwQgsR@db:5432/special # To be moved to environment file
+    expose:
+      - 5000
+    ports:
+      - 5000:5000
+    command: ["postgraphile", "--connection", "postgres://postgres:bVawU6etXvWwQgsR@db:5432/special", "--host", "0.0.0.0", "--port", "5000", "--schema", "special"]
+    links:
+      - db
+    networks:
+      - psql-pgql
+  queue:
+    container_name: queue
+    restart: always
+    image: queue
+    build:
+      context: ./queue
+    depends_on:
+      - graphql
+    environment:
+      GRAPHQL_SERVER: graphql
+    expose:
+      - 3000
+    ports:
+      - 3000:3000
+    links:
+      - graphql
+    networks:
+      - psql-pgql
+  dashboard:
+    container_name: dashboard
+    restart: always
+    image: server
+    build:
+      context: ./frontend
+    depends_on:
+      - queue
+    environment:
+      QUEUE_BACKEND: queue
+    expose:
+      - 8080
+    ports:
+      - 8080:8080
+    links:
+      - queue
+    networks:
+      - psql-pgql
+networks:
+  psql-pgql:
