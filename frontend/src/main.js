@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import SuiVue from 'semantic-ui-vue';
 import App from './App.vue'
 import Home from './views/Home.vue'
 import Queue from './views/QueuePage.vue'
 
 Vue.use(VueRouter);
+Vue.use(SuiVue);
 
 
 const routes = [

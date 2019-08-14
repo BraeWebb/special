@@ -1,20 +1,29 @@
 <template>
-  <div id="queue" v-bind:style="'width:' + config.width + '; height:' + config.height">
-    <h1>{{config.title}}
-    <br/>
-    <button v-on:click="joinQueue">Join</button>
-    </h1>
-      <p>{{config}}</p>
-      <p>{{waiting}}</p>
-      <QueueItem
-              v-for="waiter in waiting"
-              v-bind:key="waiter.id"
-              v-bind:user="waiter"
+  <sui-card id="queue" v-bind:style="'width:' + config.width + '; height:' + config.height">
+    <sui-card-content>
+      <sui-card-header>
+        <h1>{{config.title}}</h1>
+      </sui-card-header>
+    </sui-card-content>
 
-              v-bind:config="config"
-              v-bind:socket="socket"
-      />
-  </div>
+    <sui-card-content>
+      <sui-table basic="very" celled>
+        <sui-table-body>
+          <QueueItem
+                  v-for="waiter in waiting"
+                  v-bind:key="waiter.id"
+                  v-bind:user="waiter"
+
+                  v-bind:config="config"
+                  v-bind:socket="socket"
+          />
+        </sui-table-body>
+      </sui-table>
+    </sui-card-content>
+    <sui-button positive attached="bottom" v-on:click="joinQueue">
+      <sui-icon name="add" /> Join
+    </sui-button>
+  </sui-card>
 </template>
 
 

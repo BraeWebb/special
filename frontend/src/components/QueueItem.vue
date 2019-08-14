@@ -1,15 +1,17 @@
 <template>
-    <div>
-        <h4>{{user.name}}
-            <button v-on:click="leaveQueue">Leave</button>
-        </h4>
-    </div>
+    <sui-table-row>
+        <sui-table-cell>{{user.name}}</sui-table-cell>
+        <sui-table-cell collapsing text-align="right">
+            <sui-button primary v-on:click="leaveQueue">Leave</sui-button>
+        </sui-table-cell>
+    </sui-table-row>
 </template>
 
 
 <script>
   export default {
     name: 'QueueItem',
+    components: {},
     props: [
       "config",
       "user",
