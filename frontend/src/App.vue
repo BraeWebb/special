@@ -1,48 +1,22 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <Queue
-            v-bind:socket="socket"
-            v-bind:config="queue"
-            v-bind:user="user"
-            v-bind:key="queue.id"
-            v-for="queue in queues"
-    />
+    <h1>Hello App!</h1>
+    <p>
+      <!-- use router-link component for navigation. -->
+      <!-- specify the link by passing the `to` prop. -->
+      <!-- `<router-link>` will be rendered as an `<a>` tag by default -->
+      <router-link to="/">Home</router-link>
+      <router-link to="/queue">Queue</router-link>
+    </p>
+    <!-- route outlet -->
+    <!-- component matched by the route will render here -->
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Queue from './components/Queue.vue'
-import io from 'socket.io-client';
-
 export default {
-  name: 'app',
-  components: {
-    Queue
-  },
-  data() {
-    return {
-      queues: [
-        {
-          "id": "left-queue",
-          "title": "Left Magic Queue",
-          "width": "40%",
-          "height": "100%",
-        },
-        {
-          "id": "right-queue",
-          "title": "Right Magic Queue",
-          "width": "40%",
-          "height": "100%",
-        }
-      ],
-      user: {
-        id: Math.floor(Math.random() * 10),
-        name: "Mr Webb"
-      },
-      socket: io("localhost:3000")
-    };
-  },
+  name: 'app'
 }
 </script>
 
