@@ -8,6 +8,14 @@
 
     <sui-card-content>
       <sui-table basic="very" celled>
+        <sui-table-header>
+          <tr>
+            <th>Name</th>
+            <th>Questions asked</th>
+            <th>Wait time</th>
+            <th></th>
+          </tr>
+        </sui-table-header>
         <sui-table-body>
           <QueueItem
                   v-for="waiter in waiting"
@@ -52,7 +60,9 @@ export default {
       this.socket.emit('join', {
         user: {
           id: Math.floor(Math.random() * 3000), // Simulate random users joining
-          name: "Mr Webb"
+          name: "Mr Maybe",
+          questions_asked: 0,
+          join_time: new Date().toLocaleString(),
         },
         queue: this.config.id
       });
