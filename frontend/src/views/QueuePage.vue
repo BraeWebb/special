@@ -1,14 +1,19 @@
 <template>
-    <div id="queue">
-        <img alt="Vue logo" src="../assets/logo.png">
-        <Queue
-                v-bind:socket="socket"
-                v-bind:config="queue"
-                v-bind:user="user"
-                v-bind:key="queue.id"
-                v-for="queue in queues"
-        />
-    </div>
+    <!--<div id="card-container" class="card-group-container">-->
+    <!--<div id="card-container" class="ui container center aligned">-->
+        <div id="queue" class="card-group">
+            <!--<img alt="Vue logo" src="../assets/logo.png">-->
+            <sui-card-group :items-per-row="2" v-bind:style="'width:100%'">
+                <Queue
+                        v-bind:socket="socket"
+                        v-bind:config="queue"
+                        v-bind:user="user"
+                        v-bind:key="queue.id"
+                        v-for="queue in queues"
+                />
+            </sui-card-group>
+        </div>
+    <!--</div>-->
 </template>
 
 <script>
@@ -25,14 +30,14 @@
         queues: [
           {
             "id": "left-queue",
-            "title": "Left Magic Queue",
-            "width": "40%",
+            "title": "Quick Questions",
+            "width": "45%",
             "height": "100%",
           },
           {
             "id": "right-queue",
-            "title": "Right Magic Queue",
-            "width": "40%",
+            "title": "Long Questions",
+            "width": "45%",
             "height": "100%",
           }
         ],

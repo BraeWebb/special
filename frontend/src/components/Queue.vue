@@ -1,5 +1,5 @@
 <template>
-  <sui-card id="queue" v-bind:style="'width:' + config.width + '; height:' + config.height">
+  <sui-card :id="config.id" v-bind:style="'width:' + config.width + '; height:' + config.height" class="ui container center aligned">
     <sui-card-content>
       <sui-card-header>
         <h1>{{config.title}}</h1>
@@ -78,8 +78,8 @@ export default {
 }
 </script>
 
-<style scoped>
-    #queue {
-        float: left;
-    }
-</style>
+<!--<style scoped>-->
+    <!--#queue {-->
+        <!--float: left;-->
+    <!--}-->
+<!--</style>-->
