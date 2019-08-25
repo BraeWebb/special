@@ -6,3 +6,25 @@ body {
 a {
   color: #00B7FF;
 }
+
+.card-group-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  /*flex-direction: row;*/
+  /*width: 100%;*/
+  /*text-align: center;*/
+  /*margin: 10% 0;*/
+}
+
+.card-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  /*flex-direction: row;*/
+  /*width: 100%;*/
+  /*text-align: center;*/
+  /*margin: 10% 0;*/
+}
