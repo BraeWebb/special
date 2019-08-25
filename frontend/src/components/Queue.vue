@@ -1,12 +1,12 @@
 <template>
-  <sui-card id="queue" v-bind:style="'width:' + config.width + '; height:' + config.height">
+  <sui-card :id="config.id" v-bind:style="'width:' + config.width + '; height:' + config.height" class="ui container center aligned">
     <sui-card-content>
       <sui-card-header>
         <h1>{{config.title}}</h1>
       </sui-card-header>
     </sui-card-content>
 
-    <sui-button positive attached="bottom" v-on:click="joinQueue" style="background-color: #00FAA4; color: #005236;">
+    <sui-button positive attached="bottom" v-on:click="joinQueue" class="spring-green-button">
       <sui-icon name="add" /> Join
     </sui-button>
 
@@ -17,6 +17,7 @@
             <th>Name</th>
             <th>Questions asked</th>
             <th>Wait time</th>
+            <th>Signed on</th>
             <th></th>
           </tr>
         </sui-table-header>
@@ -63,6 +64,7 @@ export default {
           id: Math.floor(Math.random() * 3000), // Simulate random users joining
           name: "Mr Maybe",
           questions_asked: 0,
+          signed_on: true,
           join_time: new Date().toLocaleString(),
         },
         queue: this.config.id
@@ -79,8 +81,8 @@ export default {
 }
 </script>
 
-<style scoped>
-    #queue {
-        float: left;
-    }
-</style>
+<!--<style scoped>-->
+    <!--#queue {-->
+        <!--float: left;-->
+    <!--}-->
+<!--</style>-->
