@@ -6,6 +6,10 @@
       </sui-card-header>
     </sui-card-content>
 
+    <sui-button positive attached="bottom" v-on:click="joinQueue" style="background-color: #00FAA4; color: #005236;">
+      <sui-icon name="add" /> Join
+    </sui-button>
+
     <sui-card-content>
       <sui-table basic="very" celled>
         <sui-table-header>
@@ -28,9 +32,6 @@
         </sui-table-body>
       </sui-table>
     </sui-card-content>
-    <sui-button positive attached="bottom" v-on:click="joinQueue">
-      <sui-icon name="add" /> Join
-    </sui-button>
   </sui-card>
 </template>
 
