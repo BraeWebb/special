@@ -6,6 +6,10 @@
       </sui-card-header>
     </sui-card-content>
 
+    <sui-button positive attached="bottom" v-on:click="joinQueue" class="spring-green-button">
+      <sui-icon name="add" /> Join
+    </sui-button>
+
     <sui-card-content>
       <sui-table basic="very" celled>
         <sui-table-header>
@@ -13,6 +17,7 @@
             <th>Name</th>
             <th>Questions asked</th>
             <th>Wait time</th>
+            <th>Signed on</th>
             <th></th>
           </tr>
         </sui-table-header>
@@ -28,9 +33,6 @@
         </sui-table-body>
       </sui-table>
     </sui-card-content>
-    <sui-button positive attached="bottom" v-on:click="joinQueue">
-      <sui-icon name="add" /> Join
-    </sui-button>
   </sui-card>
 </template>
 
@@ -62,6 +64,7 @@ export default {
           id: Math.floor(Math.random() * 3000), // Simulate random users joining
           name: "Mr Maybe",
           questions_asked: 0,
+          signed_on: true,
           join_time: new Date().toLocaleString(),
         },
         queue: this.config.id

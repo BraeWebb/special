@@ -3,26 +3,27 @@ body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
-h1 {
-	color: #FF0000;
-}
-
 a {
   color: #00B7FF;
 }
 
-.green-button {
-	background-color: #00FAA4; 
+.ui.button.spring-green-button {
+	background-color: #00FAA4;
 	color: #005236;
-	align-items: center;
-	justify-content: center;
 }
 
-.red-button {
-	background-color: #cf0000; 
-	color: #ffe3e3;
-	align-items: center;
-	justify-content: center;
+.ui.button.spring-green-button:hover {
+  background-color: #00d48a;
+  color: #005236;
+}
+
+.ui.button.spring-green-button:focus {
+  background-color: #00FAA4;
+  color: #005236;
+}
+
+.ui.table {
+  text-align: center;
 }
 
 .card-group-container {

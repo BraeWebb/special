@@ -3,8 +3,13 @@
         <sui-table-cell>{{user.name}}</sui-table-cell>
         <sui-table-cell>{{user.questions_asked}}</sui-table-cell>
         <sui-table-cell>{{user.join_time}}</sui-table-cell>
+        <sui-table-cell v-if="user.signed_on"><i class="check icon"></i></sui-table-cell>
+        <sui-table-cell v-else><i class="close icon"></i></sui-table-cell>
         <sui-table-cell collapsing text-align="right">
-            <sui-button primary v-on:click="leaveQueue">Leave</sui-button>
+          <div class="ui icon buttons">
+            <button class="ui positive button"><i class="check icon"></i></button>
+            <button class="ui negative button"><i class="close icon"></i></button>
+          </div>
         </sui-table-cell>
     </sui-table-row>
 </template>
@@ -31,6 +36,3 @@
     }
   }
 </script>
-
-<style scoped>
-</style>
