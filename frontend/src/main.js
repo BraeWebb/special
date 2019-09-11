@@ -4,6 +4,7 @@ import SuiVue from 'semantic-ui-vue';
 import App from './App.vue'
 import Home from './views/Home.vue'
 import Queue from './views/QueuePage.vue'
+import Alloc from './views/allocation/Alloc.vue'
 
 Vue.use(VueRouter);
 Vue.use(SuiVue);
@@ -11,7 +12,8 @@ Vue.use(SuiVue);
 
 const routes = [
   { path: '/', component: Home },
-  { path: '/queue', component: Queue }
+  { path: '/queue', component: Queue },
+    { path: '/alloc', component: Alloc }
 ];
 
 const router = new VueRouter({

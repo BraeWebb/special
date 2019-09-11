@@ -1,8 +1,9 @@
 <template>
-  <div id="app">
+  <div>
     <sui-menu pointing secondary>
       <router-link to="/" is="sui-menu-item">Home</router-link>
       <router-link to="/queue" is="sui-menu-item">Queue</router-link>
+      <router-link to="/alloc" is="sui-menu-item">Allocate</router-link>
       <sui-menu-menu position="right">
         <router-link to="/logout"
                 is="sui-menu-item"
@@ -12,7 +13,9 @@
       </sui-menu-menu>
     </sui-menu>
 
+    <div id="app">
     <router-view></router-view>
+    </div>
   </div>
 </template>
 
