@@ -1,11 +1,10 @@
 <template>
-  <div id="app">
+  <div>
     <sui-menu pointing secondary>
       <router-link to="/" is="sui-menu-item">Home</router-link>
       <router-link to="/queue" is="sui-menu-item">Queue</router-link>
       <router-link to="/allocate" is="sui-menu-item">Allocate</router-link>
       <router-link to="/investigate" is="sui-menu-item">Investigate</router-link>
-
       <sui-menu-menu position="right">
         <sui-dropdown item icon="user" simple>
           Mr Webb
@@ -16,7 +15,9 @@
       </sui-menu-menu>
     </sui-menu>
 
+    <div id="app">
     <router-view></router-view>
+    </div>
   </div>
 </template>
 
