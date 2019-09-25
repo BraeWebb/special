@@ -19,6 +19,10 @@ function joinQueue(io, socket) {
     let user = socket.user;
 
     join(user, queue).then((data) => {
+      io.sockets.sockets[socket.id].emit('joined', {
+        'queue': queue
+      });
+
       getQueue(queue).then((data) => {
         console.log(data);
 
@@ -40,6 +44,10 @@ function leaveQueue(io, socket) {
     let user = socket.user;
 
     leave(user, queue).then((data) => {
+      io.sockets.sockets[socket.id].emit('left', {
+        'queue': queue
+      });
+
       getQueue(queue).then((data) => {
         console.log(data);
 

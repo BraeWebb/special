@@ -29,22 +29,18 @@
       return {
         queues: [
           {
-            "id": "left-queue",
+            "id": "quick",
             "title": "Quick Questions",
             "width": "45%",
             "height": "100%",
           },
           {
-            "id": "right-queue",
+            "id": "long",
             "title": "Long Questions",
             "width": "45%",
             "height": "100%",
           }
         ],
-        // user: {
-        //   id: Math.floor(Math.random() * 10),
-        //   name: "Mr Yo"
-        // },
         socket: io("localhost:3000")
       };
     },
