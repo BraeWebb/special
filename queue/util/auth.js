@@ -34,12 +34,12 @@ const uqsso = require('uqsso');
 /** Constant for a dummy user used in development mode */
 const DUMMY = {
   email:"s4435400@student.uq.edu.au",
-  name:"Brae Webb",
+  name:"Sir John Webb",
   lastname:"Webb",
   firstname:"Brae",
   groups:["labs:csse2002", "labs:csse2002-2019-1"],
   type:"Student",
-  user:"s4435400"
+  user:"s44354008"
 };
 
 /**

@@ -4,7 +4,8 @@
  * @param io An instance of socket.io listener
  */
 
-let {join, leave} = require("../database/queue");
+let {getQueue, getQueues, join, leave} = require("../database/queue");
+let {registerUser} = require("../database/user");
 
 /**
  * Construct and return a message handler for when a client joins the queue.
@@ -17,17 +18,13 @@ function joinQueue(io, socket) {
     let queue = data["queue"];
     let user = socket.user;
 
-    console.log(queue);
-    console.log(user);
+    join(user, queue).then((data) => {
+      getQueue(queue).then((data) => {
+        console.log(data);
 
-    if (socket.queues.indexOf(queue) === -1) {
-      socket.queue[queue] = {};
-      socket.queues.push(queue);
-    }
-
-    socket.queue[queue][user["id"]] = data["user"];
-
-    io.emit('update', {'waiting': socket.queue[queue], 'queue': queue});
+        io.emit('update', {'waiting': data, 'queue': queue});
+      });
+    });
   };
 }
 
@@ -42,9 +39,13 @@ function leaveQueue(io, socket) {
     let queue = data["queue"];
     let user = socket.user;
 
-    delete socket.queue[queue][user["id"]];
+    leave(user, queue).then((data) => {
+      getQueue(queue).then((data) => {
+        console.log(data);
 
-    io.emit('update', {'waiting': socket.queue[queue], 'queue': queue});
+        io.emit('update', {'waiting': data, 'queue': queue});
+      });
+    });
   };
 }
 
@@ -55,12 +56,18 @@ function leaveQueue(io, socket) {
  */
 function bind(io) {
   return io.on('connection', (socket) => {
-    console.log(socket.request.user);
     let user = socket.request.user.user;
-    socket.user = user.slice(1, user.length);
-    console.log(socket.user);
-    socket.queues = [];
-    socket.queue = {};
+    socket.user = parseInt(user.slice(1, user.length));
+
+    registerUser(socket.user, socket.request.user);
+
+    getQueues().then((queues) => {
+      queues.forEach((queue, index) => {
+        getQueue(queue).then((data) => {
+          io.emit('update', {'waiting': data, 'queue': queue});
+        });
+      });
+    });
 
     socket.on('join', joinQueue(io, socket));
     socket.on('leave', leaveQueue(io, socket));
