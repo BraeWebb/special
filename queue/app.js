@@ -1,22 +1,44 @@
 const createError = require('http-errors');
 const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const cookieParser = require('cookie-parser');
 
+/* Authentication through UQ SSO */
+const auth = require('./util/auth');
+
+/* Application */
 const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+/* Socket connections */
+const io = app.io = require('socket.io')();
+app.attachServer = function(server) {
+  app.io.attach(server);
+};
+
+/* Routers */
+const queueRouter = require('./routes/queue');
 
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
-// app.use('/queue', queueRouter);
+/* Authentication middleware */
+app.use(auth.express);
+app.io.use(auth.io);
+
+/* Socket.io binding */
+const bind = require('./sockets/queue');
+bind(app.io);
+
+app.use('/queue', function(req, res, next) {
+  if (req.user.firstname !== "Brae") {
+    next(createError(403));
+  } else {
+    next();
+  }
+});
+app.use('/queue', queueRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
