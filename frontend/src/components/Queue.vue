@@ -6,8 +6,11 @@
       </sui-card-header>
     </sui-card-content>
 
-    <sui-button positive attached="bottom" v-on:click="joinQueue" class="spring-green-button">
+    <sui-button v-if="!joined" positive attached="bottom" v-on:click="joinQueue" class="spring-green-button">
       <sui-icon name="add" /> Join
+    </sui-button>
+    <sui-button v-if="joined" attached="bottom" v-on:click="leaveQueue" color="red">
+      <sui-icon name="minus" /> Leave
     </sui-button>
 
     <sui-card-content>
@@ -48,14 +51,23 @@ export default {
   props: [
     "config",
     "socket",
-    "user"
+    "user",
   ],
   data() {
     return {
-      waiting: []
+      waiting: [],
+      joined: false
     }
   },
   methods: {
+    updateJoined(inverse) {
+      return (data) => {
+        this.joined = data["queue"] === this.config.id;
+        if (inverse && this.joined) {
+          this.joined = !this.joined;
+        }
+      }
+    },
     joinQueue(e) {
       e.preventDefault();
 
@@ -70,6 +82,14 @@ export default {
         queue: this.config.id
       });
     },
+    leaveQueue(e) {
+      e.preventDefault();
+
+      this.socket.emit('leave', {
+        user: this.user,
+        queue: this.config.id
+      });
+    },
   },
   mounted() {
     this.socket.on('update', (data) => {
@@ -77,6 +97,8 @@ export default {
         this.waiting = Object.values(data["waiting"]);
       }
     });
+    this.socket.on('joined', this.updateJoined(false));
+    this.socket.on('left', this.updateJoined(true));
   }
 }
 </script>

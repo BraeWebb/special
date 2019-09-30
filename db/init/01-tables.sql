@@ -10,9 +10,9 @@ CREATE TABLE IF NOT EXISTS special.User (
 
 CREATE TABLE IF NOT EXISTS special.Queue (
     asker integer NOT NULL REFERENCES special.User(id),
-    time_joined time,
+    time_joined time DEFAULT now(),
     type text,
-    PRIMARY KEY (asker)
+    PRIMARY KEY (asker, type)
 );
 COMMENT ON TABLE special.Queue IS
 'Current queue entries';
