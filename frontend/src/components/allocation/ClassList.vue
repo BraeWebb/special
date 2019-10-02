@@ -11,14 +11,10 @@
                 </sui-table-row>
             </sui-table-header>
 
-            <sui-table-body v-for="cls in sessions">
-                <sui-table-row>
-                    <sui-table-cell><sui-input v-bind:value=cls.id /></sui-table-cell>
-                    <sui-table-cell><sui-input v-bind:value=cls.day /></sui-table-cell>
-                    <sui-table-cell><sui-input v-bind:value=cls.time type="Number" /></sui-table-cell>
-                    <sui-table-cell><sui-input v-bind:value=cls.duration type="Number" /></sui-table-cell>
-                    <sui-table-cell><sui-input v-bind:value=cls.tutors type="Number" /></sui-table-cell>
-                </sui-table-row>
+            <sui-table-body v-for="cls in sessions" v-bind:key="cls.id">
+                <ClassItem v-bind:id="cls.id" v-bind:day="cls.day" v-bind:startTime="cls.startTime"
+                            v-bind:duration="cls.duration" v-bind:minTutors="cls.minTutors"
+                            v-bind:maxTutors="cls.maxTutors"/>
             </sui-table-body>
         </sui-table>
 
@@ -29,11 +25,17 @@
 </template>
 
 <script>
+    import ClassItem from './ClassItem.vue'
+
     export default {
         name: "ClassList",
         props: ["sessions"],
+        components: {
+            ClassItem
+        },
         methods: {
             generateCSV: function (sessions) {
+                // TODO: make this work for new data
                 let result = "ID,DAY,TIME,DURATION,TUTORS\n";
                 for (let i = 0; i < sessions.length; i++) {
                     let session = sessions[i];

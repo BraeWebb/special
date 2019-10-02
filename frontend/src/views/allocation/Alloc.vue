@@ -68,16 +68,19 @@
                     {
                         "id": "T01",
                         "day": "Mon",
-                        "time": 8,
+                        "startTime": 8,
                         "duration": 1,
-                        "tutors": 2
+                        "minTutors": 2,
+                        "maxTutors": 2
                     },
                     {
                         "id": "P01",
                         "day": "Wed",
-                        "time": 14,
+                        "startTime": 14,
                         "duration": 2,
-                        "tutors": 2
+                        "tutors": 2,
+                        "minTutors": 2,
+                        "maxTutors": 2
                     }
                 ],
             };
