@@ -4,7 +4,11 @@
             <div class="active item">{{report.title}}</div>
         </div>
         <div class="ui fluid attached container segment">
-            <div v-if="uploading.uploadError !== null" class="ui active inverted dimmer">
+            <div v-if="result !== null">
+                <a :href="result">{{result}}</a>
+            </div>
+
+            <div v-else-if="uploading.uploadError !== null" class="ui active inverted dimmer">
                 Error connecting to backend: {{uploading.uploadError}}
                 <div class="ui loader"></div>
             </div>
@@ -114,6 +118,8 @@
           reportPath: null
         },
 
+        result: null,
+
         socket: socket
       }
     },
@@ -165,12 +171,18 @@
 
       submitReport() {
         this.socket.emit("generate", {report: this.report})
+      },
+
+      reportGenerated(data) {
+        this.result = data;
       }
     },
     mounted() {
       socket.on("connect_error", this.socketDisconnect);
 
       socket.on("reconnect", this.socketReconnect);
+
+      socket.on("generated", this.reportGenerated)
     }
   }
 </script>

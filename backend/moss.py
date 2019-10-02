@@ -107,12 +107,8 @@ class Report:
 
             print("Request sent, waiting for reply")
 
-            while True:
-                result = connection.recv(1024)
-                if not result:
-                    break
-                report.url = result.decode()
-                print(report.url)
+            report.url = connection.recv(1024).decode()
+            print(report.url)
 
             connection.send(b'end\n')
             connection.close()

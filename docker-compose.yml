@@ -72,5 +72,16 @@ services:
       - queue
     networks:
       - psql-pgql
+  redis:
+    container_name: redis
+    restart: always
+    image: redis
+    ports:
+      - 6379:6379
+    volumes:
+      - ./db/redis/data/:/data
+    entrypoint: redis-server --appendonly yes
+    networks:
+      - psql-pgql
 networks:
   psql-pgql:
