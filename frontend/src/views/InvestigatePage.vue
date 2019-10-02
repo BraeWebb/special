@@ -4,7 +4,12 @@
             <div class="active item">{{report.title}}</div>
         </div>
         <div class="ui fluid attached container segment">
-            <div class="ui stackable two column grid">
+            <div v-if="uploading.uploadError !== null" class="ui active inverted dimmer">
+                Error connecting to backend: {{uploading.uploadError}}
+                <div class="ui loader"></div>
+            </div>
+
+            <div v-else class="ui stackable two column grid">
                 <div class="stretched row">
                 <div class="column">
                     <div class="ui left icon fluid input">
@@ -71,6 +76,8 @@
     COMPLETED: 'success'
   };
 
+  let socket = io("localhost:3050");
+
   export default {
     name: 'InvestigatePage',
     data() {
@@ -82,6 +89,7 @@
           uploadState: UploadState.NOT_STARTED,
           displayUpload: true,
           progress: 0,
+          uploadError: null
         },
 
         languages: [
@@ -106,10 +114,18 @@
           reportPath: null
         },
 
-        socket: io("localhost:3050")
+        socket: socket
       }
     },
     methods: {
+      socketDisconnect(err) {
+        this.uploading.uploadError = err;
+      },
+
+      socketReconnect(attempts) {
+        this.uploading.uploadError = null;
+      },
+
       handleFileUpload() {
         this.uploading.file = this.$refs.file.files[0];
         this.uploading.uploadState = UploadState.FILE_SELECTED;
@@ -144,13 +160,17 @@
 
         uploader.on('error', function(error, fileInfo) {
           state.uploadState = UploadState.ERROR;
-          state.state = ""
         });
       },
 
       submitReport() {
         this.socket.emit("generate", {report: this.report})
       }
+    },
+    mounted() {
+      socket.on("connect_error", this.socketDisconnect);
+
+      socket.on("reconnect", this.socketReconnect);
     }
   }
 </script>
