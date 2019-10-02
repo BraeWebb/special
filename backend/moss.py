@@ -1,6 +1,17 @@
 import os
 import socket
-from typing import List
+from typing import List, Tuple
+
+
+class MockSocket(socket.socket):
+    def send(self, data, flags=None):
+        # print(data)
+        super().send(data)
+
+    def sendall(self, data, flags=None):
+        # print(data)
+        super().send(data)
+
 
 LANGUAGES = ("c", "cc", "java", "ml", "pascal", "ada", "lisp", "scheme",
              "haskell", "fortran", "ascii", "vhdl", "perl", "matlab", "python",
@@ -42,7 +53,7 @@ class ReportRequest:
         self.max_cases: int = max_cases
 
         self.base_files: List[str] = base_files
-        self.submissions: List[str] = submissions
+        self.submissions: List[Tuple[str]] = submissions
 
 
 class Report:
@@ -50,19 +61,19 @@ class Report:
 
     def __init__(self, request: ReportRequest):
         self.request = request
+        self.url: str = ""
 
-    def _upload_file(self, connection, file_id, file_name):
+    def _upload_file(self, connection, file_id, file_name, file_path):
         """
         file $id $lang $size $file\n
         :param connection:
         :return:
         """
-        size = os.stat(file_name).st_size
+        size = os.stat(file_path).st_size
 
-        connection.sendall(b'file %d %s %d %s' % (file_id, self.request.language.encode(), size, file_name.encode()))
-        print(b'file %d %s %d %s' % (file_id, self.request.language.encode(), size, file_name.encode()))
+        connection.sendall(b'file %d %s %d %s\n' % (file_id, self.request.language.encode(), size, file_name.encode()))
 
-        with open(file_name, "rb") as file:
+        with open(file_path, "rb") as file:
             for line in file:
                 connection.send(line)
 
@@ -70,11 +81,12 @@ class Report:
     def make_request(cls, request: ReportRequest):
         report = cls(request)
 
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as connection:
+        with MockSocket(socket.AF_INET, socket.SOCK_STREAM) as connection:
             connection.connect((SERVER, PORT))
 
             connection.sendall(b'moss %d\n' % USER_ID)
             connection.sendall(b'directory %d\n' % (1 if request.directory_mode else 0))
+            connection.sendall(b'X %d\n' % request.x)
             connection.sendall(b'maxmatches %d\n' % request.max_matches)
             connection.sendall(b'show %d\n' % request.max_cases)
 
@@ -82,22 +94,28 @@ class Report:
             connection.sendall(b'language %s\n' % request.language.encode())
             report.language_response = data = connection.recv(1024).decode()
             if data.strip() == "no":
+                connection.send(b'end\n')
+                connection.close()
                 raise UnsupportedLanguageException(f"Unsupported language: {request.language}")
 
             file_id = 1
-            for submission in request.submissions:
-                report._upload_file(connection, file_id, submission)
+            for file, submission in request.submissions:
+                report._upload_file(connection, file_id, file, submission)
                 file_id += 1
 
             connection.sendall(b'query 0 %s\n' % request.comment.encode())
 
             print("Request sent, waiting for reply")
-            # report.url = data = connection.recvmsg(1024).decode()
-            result = connection.recv(10000)
-            while len(result) > 0:
-                print(result)
-                result = connection.recv(10000)
-            # print(data)
+
+            while True:
+                result = connection.recv(1024)
+                if not result:
+                    break
+                report.url = result.decode()
+                print(report.url)
+
+            connection.send(b'end\n')
+            connection.close()
 
         return report
 
@@ -107,7 +125,7 @@ def gen_report(root):
     submissions = []
     for folder in folders:
         for file in folder[2]:
-            submissions.append(folder[0] + "/" + file)
+            submissions.append((file, folder[0] + "/" + file))
 
     request: ReportRequest = ReportRequest(base_files=[],
                                            submissions=submissions,
