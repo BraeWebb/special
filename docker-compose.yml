@@ -15,10 +15,7 @@ services:
       POSTGRES_DATABASE: special
     expose:
       - 5432
-    ports:
-      - 5432:5432
-    networks:
-      - psql-pgql
+
   graphql:
     container_name: graphql
     restart: always
@@ -27,51 +24,12 @@ services:
       - db
     environment:
       DATABASE_URL: postgres://postgres:bVawU6etXvWwQgsR@db:5432/special # To be moved to environment file
-    expose:
-      - 5000
     ports:
       - 5000:5000
     command: ["postgraphile", "--connection", "postgres://postgres:bVawU6etXvWwQgsR@db:5432/special", "--host", "0.0.0.0", "--port", "5000", "--schema", "special"]
     links:
       - db
-    networks:
-      - psql-pgql
-  queue:
-    container_name: queue
-    restart: always
-    image: queue
-    build:
-      context: ./queue
-    depends_on:
-      - graphql
-    environment:
-      GRAPHQL_SERVER: graphql
-    expose:
-      - 3000
-    ports:
-      - 3000:3000
-    links:
-      - graphql
-    networks:
-      - psql-pgql
-  dashboard:
-    container_name: dashboard
-    restart: always
-    image: server
-    build:
-      context: ./frontend
-    depends_on:
-      - queue
-    environment:
-      QUEUE_BACKEND: queue
-    expose:
-      - 8080
-    ports:
-      - 8080:8080
-    links:
-      - queue
-    networks:
-      - psql-pgql
+
   redis:
     container_name: redis
     restart: always
@@ -81,7 +39,60 @@ services:
     volumes:
       - ./db/redis/data/:/data
     entrypoint: redis-server --appendonly yes
-    networks:
-      - psql-pgql
-networks:
-  psql-pgql:
+
+  queue:
+    container_name: queue
+    restart: always
+    image: queue
+    build:
+      context: ./queue
+    depends_on:
+      - graphql
+    environment:
+      DEV: auth:*
+      GRAPHQL_SERVER: graphql
+    expose:
+      - 3000
+    ports:
+      - 4000:3000
+    links:
+      - graphql
+
+  moss:
+    container_name: moss
+    restart: always
+    image: moss
+    build:
+      context: ./moss
+    depends_on:
+      - graphql
+      - redis
+    environment:
+      DEV: auth:*
+      GRAPHQL_SERVER: graphql
+      REDIS_SERVER: redis
+    expose:
+      - 3050
+    ports:
+      - 4050:3050
+    links:
+      - graphql
+      - redis
+
+  dashboard:
+    container_name: dashboard
+    restart: always
+    image: server
+    build:
+      context: ./frontend
+    depends_on:
+      - queue
+      - moss
+    environment:
+      VUE_APP_QUEUE_PORT: 4000
+      VUE_APP_MOSS_PORT: 4050
+    ports:
+      - 5678:8080
+    links:
+      - queue
+      - moss

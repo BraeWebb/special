@@ -7,8 +7,16 @@
 let SocketIOFile = require('socket.io-file');
 let redis = require("redis");
 let path = require("path");
-let subscriber = redis.createClient();
-let publisher = redis.createClient();
+
+console.error(process.env);
+
+let redisServer = {
+  host: process.env.REDIS_SERVER ? process.env.REDIS_SERVER : "localhost",
+  port: process.env.REDIS_PORT ? process.env.REDIS_PORT : "6379"
+};
+
+let subscriber = redis.createClient(redisServer);
+let publisher = redis.createClient(redisServer);
 
 function generateReport(io, socket) {
   return (data) => {
