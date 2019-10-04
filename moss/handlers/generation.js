@@ -8,8 +8,6 @@ let SocketIOFile = require('socket.io-file');
 let redis = require("redis");
 let path = require("path");
 
-console.error(process.env);
-
 let redisServer = {
   host: process.env.REDIS_SERVER ? process.env.REDIS_SERVER : "localhost",
   port: process.env.REDIS_PORT ? process.env.REDIS_PORT : "6379"
@@ -22,17 +20,15 @@ function generateReport(io, socket) {
   return (data) => {
     let user = socket.request.user.user;
     data['user'] = user;
+    data['report']['path'] = __dirname + "/../uploaded/" + data['report']['reportPath'];
 
-    publisher.publish("report", JSON.stringify(data));
-  };
-}
+    let connection = io.sockets.sockets[socket.id];
 
-function reportGenerated(io, socket) {
-  return (data) => {
-    let user = socket.request.user.user;
-    data['user'] = user;
-
-    publisher.publish("report", JSON.stringify(data));
+    publisher.publish("report", JSON.stringify(data), function() {
+      if (connection !== undefined) {
+        connection.emit('queued');
+      }
+    });
   };
 }
 
@@ -46,7 +42,7 @@ function bind(io) {
     console.log("Error " + err);
   });
 
-  subscriber.subscribe("generated");
+  subscriber.psubscribe("report:*");
 
   return io.on('connection', (socket) => {
     let user = socket.request.user.user;
@@ -66,13 +62,36 @@ function bind(io) {
       }
     });
 
-    subscriber.on("message", function (channel, message) {
+    subscriber.on("pmessage", function (pattern, channel, message) {
       message = JSON.parse(message);
-      if (message['user'] === user) {
-        console.log(message);
-        io.sockets.sockets[socket.id].emit('generated', message['report']);
+      if (message['user'] !== user) {
+        return;
       }
-      console.log("msg " + channel + ": " + message);
+
+      let connection = io.sockets.sockets[socket.id];
+      if (connection === undefined) {
+        return;
+      }
+
+      if (channel === "report:log") {
+        connection.emit('log', message['msg']);
+      }
+
+      if (channel === "report:accepted") {
+        connection.emit('accepted');
+      }
+
+      if (channel === "report:extracted") {
+        connection.emit('extracted');
+      }
+
+      if (channel === "report:sent") {
+        connection.emit('sent');
+      }
+
+      if (channel === "report:generated") {
+        connection.emit('generated', message['report']);
+      }
     });
 
     socket.on('generate', generateReport(io, socket));
