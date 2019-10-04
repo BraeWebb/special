@@ -92,3 +92,6 @@ db/data
 
 # IntelliJ
 .idea/
+
+# redis database
+db/redis

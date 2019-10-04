@@ -12,9 +12,9 @@
             </sui-table-header>
 
             <sui-table-body v-for="cls in sessions" v-bind:key="cls.id">
-                <ClassItem v-bind:id="cls.id" v-bind:day="cls.day" v-bind:startTime="cls.startTime"
-                            v-bind:duration="cls.duration" v-bind:minTutors="cls.minTutors"
-                            v-bind:maxTutors="cls.maxTutors"/>
+                <ClassItem v-bind:id="cls.id" v-bind:day="cls.day" v-bind:startTime="cls.start_time"
+                            v-bind:duration="cls.duration" v-bind:minTutors="cls.lower_tutor_count"
+                            v-bind:maxTutors="cls.upper_tutor_count"/>
             </sui-table-body>
         </sui-table>
 

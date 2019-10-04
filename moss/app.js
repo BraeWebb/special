@@ -15,9 +15,6 @@ app.attachServer = function(server) {
   app.io.attach(server);
 };
 
-/* Routers */
-const queueRouter = require('./routes/queue');
-
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -28,17 +25,8 @@ app.use(auth.express);
 app.io.use(auth.io);
 
 /* Socket.io binding */
-const bind = require('./sockets/queue');
+const bind = require('./handlers/generation');
 bind(app.io);
-
-app.use('/queue', function(req, res, next) {
-  if (req.user.firstname !== "Brae") {
-    next(createError(403));
-  } else {
-    next();
-  }
-});
-app.use('/queue', queueRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
