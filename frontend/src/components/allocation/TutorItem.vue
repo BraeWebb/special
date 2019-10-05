@@ -9,13 +9,18 @@
             U: min <sui-input v-bind:value=minStudioHrs type="Number" v-bind:style="'width: 60px'" /></sui-table-cell>
         <sui-table-cell><sui-input type="checkbox" :checked=isJunior /></sui-table-cell>
         <sui-table-cell><sui-input type="checkbox" :checked=prefContig /></sui-table-cell>
+        <sui-table-cell><div class="ui icon buttons">
+            <button class="ui positive button" v-on:click="add(name)"><i class="plus icon"></i></button>
+            <button class="ui negative button" v-on:click="remove(name)"><i class="close icon"></i></button>
+        </div></sui-table-cell>
     </sui-table-row>
 </template>
 
 <script>
     export default {
         name: "TutorItem",
-        props: ["name", "minHrs", "maxHrs", "minTuteHrs", "minPracHrs", "minStudioHrs", "isJunior", "dailyMax", "prefContig"]
+        props: ["name", "minHrs", "maxHrs", "minTuteHrs", "minPracHrs", "minStudioHrs", "isJunior", "dailyMax",
+            "prefContig", "add", "remove"]
     }
 </script>
 

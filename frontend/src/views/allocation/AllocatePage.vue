@@ -85,8 +85,18 @@
                         "duration": 2,
                         "lower_tutor_count": 2,
                         "upper_tutor_count": 2
-                    },
+                    }
                 ],
+                availability: {
+                    "Henry-T01": true,
+                    "Henry-P01": true,
+                    "Brae-T01": true,
+                    "Brae-P01": true,
+                    "Emily-T01": true,
+                    "Emily-P01": true,
+                    "Peter-T01": true,
+                    "Peter-P01": true
+                }
             };
         }
     }
