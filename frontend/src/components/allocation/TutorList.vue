@@ -9,6 +9,7 @@
                 <sui-table-headerCell>Class Hours</sui-table-headerCell>
                 <sui-table-headerCell>Junior?</sui-table-headerCell>
                 <sui-table-headerCell>Prefer Contiguous?</sui-table-headerCell>
+                <sui-table-headerCell>Availability</sui-table-headerCell>
                 <sui-table-headerCell>Actions</sui-table-headerCell>
             </sui-table-row>
         </sui-table-header>
@@ -18,7 +19,8 @@
                        v-bind:maxHrs="tutor.upper_hr_limit" v-bind:minTuteHrs="tutor.lower_type_limits.T"
                        v-bind:minPracHrs="tutor.lower_type_limits.P" v-bind:minStudioHrs="tutor.lower_type_limits.U"
                        v-bind:isJunior="tutor.is_junior" v-bind:dailyMax="tutor.daily_max"
-                       v-bind:prefContig="tutor.pref_contig" v-bind:add="add" v-bind:remove="remove" />
+                       v-bind:prefContig="tutor.pref_contig" v-bind:sessions="sessions"
+                       v-bind:add="add" v-bind:remove="remove" />
         </sui-table-body>
     </sui-table>
 
@@ -33,7 +35,7 @@
 
     export default {
         name: "TutorList",
-        props: ["tutors"],
+        props: ["tutors", "sessions"],
         components: {
             TutorItem
         },

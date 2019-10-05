@@ -5,7 +5,7 @@
                 hi
             </sui-tab-pane>
             <sui-tab-pane title="Tutors">
-                <TutorList v-bind:tutors="tutors"></TutorList>
+                <TutorList v-bind:tutors="tutors" v-bind:sessions="sessions"></TutorList>
             </sui-tab-pane>
             <sui-tab-pane title="Classes">
                 <ClassList v-bind:sessions="sessions"></ClassList>
