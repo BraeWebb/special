@@ -14,6 +14,7 @@
         <NewReport v-if="currentTab === 'new'" :socket="socket" :logs.sync="logs"></NewReport>
         <Console v-else-if="currentTab === 'log'" :logs.sync="logs"></Console>
         <Report v-else-if="currentTab === 'report'"></Report>
+        <Case v-else-if="currentTab === 'case'"></Case>
         </keep-alive>
     </div>
 </template>
@@ -24,6 +25,7 @@
   import NewReport from '../components/investigate/NewReport';
   import Console from '../components/investigate/Console';
   import Report from '../components/investigate/Report';
+  import Case from '../components/investigate/Case';
 
   let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
   let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
@@ -34,7 +36,8 @@
     components: {
       NewReport,
       Console,
-      Report
+      Report,
+      Case
     },
     data() {
       return {
@@ -42,6 +45,7 @@
           "new": {id: "new", component: NewReport, title: "Untitled"},
           "log": {id: "log", component: Console, title: "Console Log"},
           "report": {id: "report", component: Report, title: "Example Report"},
+          "case": {id: "case", component: Case, title: "Example Case"},
         },
         currentTab: "new",
 
