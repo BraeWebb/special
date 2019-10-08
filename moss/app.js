@@ -25,8 +25,10 @@ app.use(auth.express);
 app.io.use(auth.io);
 
 /* Socket.io binding */
-const bind = require('./handlers/generation');
-bind(app.io);
+const generation = require('./handlers/generation');
+generation(app.io);
+const database = require('./handlers/database');
+database(app.io);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

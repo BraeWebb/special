@@ -7,6 +7,8 @@
 let SocketIOFile = require('socket.io-file');
 let redis = require("redis");
 let path = require("path");
+let client = require("../database");
+let generateID = require("../util/id");
 
 let redisServer = {
   host: process.env.REDIS_SERVER ? process.env.REDIS_SERVER : "localhost",
@@ -16,14 +18,78 @@ let redisServer = {
 let subscriber = redis.createClient(redisServer);
 let publisher = redis.createClient(redisServer);
 
+const newRequestMutation = `
+mutation newRequest($id: String!, $title: String!,
+$file: String!, $language: String!, $maxMatches:Int!,
+$maxCases: Int!, $generator: Int!) {
+  createReportrequest (input: {
+    reportrequest: {
+      id: $id,
+      title: $title,
+      file: $file,
+      language: $language,
+      maxMatches: $maxMatches,
+      maxCases: $maxCases,
+      generator: $generator
+    }
+  }) {
+    reportrequest {
+      id
+    }
+  }
+}`;
+function logReportRequest(data, user) {
+  let report = data["report"];
+  client.request(newRequestMutation,
+    {
+      "id": data["id"],
+      "title": report["title"],
+      "file": report["reportPath"],
+      "language": report["language"],
+      "maxMatches": report["maxMatches"],
+      "maxCases": report["maxCases"],
+      "generator": user,
+    }
+  );
+}
+const newReportMutation = `
+mutation newReport($id: String!, $title: String!,
+$url: String!, $request: String!, $generator: Int!) {
+  createReport(input: {report: {
+    id: $id,
+    title: $title,
+    url: $url,
+    request: $request,
+    generator: $generator
+  }}) {
+    report {
+      id
+    }
+  }
+}`;
+function logReport(id, request, url, user) {
+  client.request(newReportMutation,
+    {
+      "id": id,
+      "title": request["report"]["title"],
+      "url": url,
+      "request": request["id"],
+      "generator": user,
+    }
+  );
+}
+
+
 function generateReport(io, socket) {
   return (data) => {
     let user = socket.request.user.user;
+    data['id'] = generateID();
     data['user'] = user;
     data['report']['path'] = __dirname + "/../uploaded/" + data['report']['reportPath'];
 
     let connection = io.sockets.sockets[socket.id];
 
+    logReportRequest(data, socket.user);
     publisher.publish("report", JSON.stringify(data), function() {
       if (connection !== undefined) {
         connection.emit('queued');
@@ -90,6 +156,9 @@ function bind(io) {
       }
 
       if (channel === "report:generated") {
+        let request = message['request'];
+        let reportId = generateID();
+        logReport(reportId, request, message['report'], socket.user);
         connection.emit('generated', message['report']);
       }
     });

@@ -11,6 +11,7 @@
         </div>
 
         <keep-alive>
+        <ReportList v-if="currentTab === 'list'" :socket="socket"></ReportList>
         <NewReport v-if="currentTab === 'new'" :socket="socket" :logs.sync="logs"></NewReport>
         <Console v-else-if="currentTab === 'log'" :logs.sync="logs"></Console>
         <Report v-else-if="currentTab === 'report'"></Report>
@@ -22,6 +23,7 @@
 <script>
   import io from 'socket.io-client';
 
+  import ReportList from '../components/investigate/ReportList';
   import NewReport from '../components/investigate/NewReport';
   import Console from '../components/investigate/Console';
   import Report from '../components/investigate/Report';
@@ -34,6 +36,7 @@
   export default {
     name: 'InvestigatePage',
     components: {
+      ReportList,
       NewReport,
       Console,
       Report,
@@ -42,6 +45,7 @@
     data() {
       return {
         tabs: {
+          "list": {id: "list", component: ReportList, title: "Report List"},
           "new": {id: "new", component: NewReport, title: "Untitled"},
           "log": {id: "log", component: Console, title: "Console Log"},
           "report": {id: "report", component: Report, title: "Example Report"},

@@ -69,6 +69,7 @@
         report: {
           language: null,
           maxMatches: 10,
+          maxCases: 250,
           title: "Untitled",
           reportPath: null
         },
@@ -87,7 +88,6 @@
     methods: {
       fileUploaded(fileInfo) {
         this.uploaded = true;
-        console.log(fileInfo);
         this.report.reportPath = fileInfo.name;
       },
 
@@ -116,6 +116,11 @@
       this.socket.on("generated", this.updateStep("generated"));
 
       this.socket.on("generated", this.reportGenerated);
+
+      this.socket.emit("getLanguages");
+      this.socket.on("languages", (languages) => {
+        this.languages = languages;
+      });
     }
   }
 </script>

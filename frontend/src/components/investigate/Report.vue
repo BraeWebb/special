@@ -1,5 +1,15 @@
 <template>
     <div class="ui segment">
+        <h2 class="ui header">Title</h2>
+        <a class="ui teal image label">
+            Brae Webb
+            <div class="detail">Generator</div>
+        </a>
+        <a class="ui green image label">
+            https://moss.standord.edu.au/results/34234786556
+            <div class="detail">URL</div>
+        </a>
+
         <table class="ui sortable celled table left aligned" id="user-table">
             <thead>
             <tr>
@@ -44,6 +54,7 @@
     props: [],
     data() {
       return {
+
         cases: cases
       }
     },
