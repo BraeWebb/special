@@ -23,8 +23,8 @@ def extract(path, ext, out="out"):
                 continue
 
             # copy the file out under the student number
-            os.makedirs(os.path.join("out", student), exist_ok=True)
-            target = os.path.join("out", student, os.path.basename(file))
+            os.makedirs(os.path.join(out, student), exist_ok=True)
+            target = os.path.join(out, student, os.path.basename(file))
             with open(target, "w") as f:
                 f.write(zip.read(file).decode())
 
