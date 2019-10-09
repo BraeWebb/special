@@ -46,6 +46,44 @@ query getReport($id: String!){
   }
 }
 `;
+const getUserQuery = `
+query getUser($id: String!) {
+  userById(id: $id) {
+    id,
+    name
+  }
+}
+`;
+
+const addUser = `
+mutation addUser($id: String!, $name: String!) {
+  createUser (input: {
+    user: {
+      id: $id,
+      name: $name,
+      questionsToday: 0,
+      questionsAllTime: 0
+    }
+  }) {
+    clientMutationId
+  }
+}`;
+
+
+function cleanUser(user) {
+  return user["userById"];
+}
+
+function registerUser(user, data) {
+  return client.request(getUserQuery, {"id": user}).then(cleanUser).then((id) => {
+    if (id === null) {
+      return client.request(addUser, {
+        "id": user,
+        "name": data["name"]
+      });
+    }
+  });
+}
 
 function relay(command, io, socket, responder) {
   let request = "get" + command.charAt(0).toUpperCase() + command.slice(1);
@@ -64,7 +102,9 @@ function relay(command, io, socket, responder) {
 function bind(io) {
   return io.on('connection', (socket) => {
     let user = socket.request.user.user;
-    socket.user = parseInt(user.slice(1, user.length));
+    socket.user = user;
+
+    registerUser(user, socket.request.user);
 
     relay("languages", io, socket, (connection, data) => {
       client.request(getLanguagesQuery).then((data) => {
@@ -81,6 +121,14 @@ function bind(io) {
     relay("report", io, socket, (connection, data) => {
       client.request(getReportQuery, {id: data["id"]}).then((data) => {
         connection.emit('report', data["reportById"]);
+      });
+    });
+
+    relay("user", io, socket, (connection, data) => {
+      console.log(user);
+      client.request(getUserQuery, {id: user}).then((data) => {
+        console.log(data);
+        connection.emit('user', data["userById"]);
       });
     });
   });

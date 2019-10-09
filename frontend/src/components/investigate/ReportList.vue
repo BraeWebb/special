@@ -22,7 +22,7 @@
                             <i class="globe right icon"></i>
                         </button>
                     </a>
-                    <a :href="'/integrity/report/' + row.id" target="_blank">
+                    <a :href="'/integrity/report/' + row.id">
                         <button class="ui icon button" role="button">
                             <i class="angle right icon"></i>
                         </button>

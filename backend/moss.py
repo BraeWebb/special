@@ -111,7 +111,7 @@ class Report:
             if sent_callback is not None:
                 sent_callback()
 
-            report.url = connection.recv(1024).decode()
+            report.url = connection.recv(1024).decode().strip()
             logger(f"Request generated: {report.url}")
 
             connection.send(b'end\n')

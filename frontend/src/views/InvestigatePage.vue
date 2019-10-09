@@ -11,7 +11,7 @@
 
             <div class="ui secondary menu right">
                 <sui-dropdown item icon="user" simple>
-                    Mr Webb
+                    {{user.name}}
                     <sui-dropdown-menu>
                         <a class="ui item" href="/logout">Logout</a>
                     </sui-dropdown-menu>
@@ -64,16 +64,26 @@
       return {
         display: display,
         socket: socket,
+        user: {
+          name: "Loading"
+        }
       }
     },
     mounted() {
-      socket.on("connect_error", this.socketDisconnect);
-
-      socket.on("reconnect", this.socketReconnect);
-
-      socket.on("log", (msg) => {
-        this.logs.push(msg);
+      this.socket.emit("getUser");
+      this.socket.on("user", (user) => {
+        this.user = user;
       });
     }
   }
 </script>
+
+<style>
+    #investigate {
+        font-family: 'Avenir', Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-align: center;
+        color: #2c3e50;
+    }
+</style>

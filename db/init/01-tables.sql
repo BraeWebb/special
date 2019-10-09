@@ -1,7 +1,7 @@
 \connect special
 
 CREATE TABLE IF NOT EXISTS special.User (
-  id integer NOT NULL,
+  id text NOT NULL,
   name text,
   questions_today integer,
   questions_all_time integer,
@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS special.User (
 );
 
 CREATE TABLE IF NOT EXISTS special.Queue (
-    asker integer NOT NULL REFERENCES special.User(id),
+    asker text NOT NULL REFERENCES special.User(id),
     time_joined time DEFAULT now(),
     type text,
     PRIMARY KEY (asker, type)
@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS special.ReportRequest (
 	max_matches integer NOT NULL,
 	max_cases integer NOT NULL,
 	status text,
-	generator integer NOT NULL REFERENCES special.User(id),
+	generator text NOT NULL REFERENCES special.User(id),
 	PRIMARY KEY (id)
 );
 
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS special.Report (
 	title text NOT NULL,
 	url text NOT NULL,
 	request text NOT NULL REFERENCES special.ReportRequest(id),
-	generator integer NOT NULL REFERENCES special.User(id),
+	generator text NOT NULL REFERENCES special.User(id),
 	PRIMARY KEY (id)
 );
 

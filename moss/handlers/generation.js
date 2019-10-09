@@ -21,7 +21,7 @@ let publisher = redis.createClient(redisServer);
 const newRequestMutation = `
 mutation newRequest($id: String!, $title: String!,
 $file: String!, $language: String!, $maxMatches:Int!,
-$maxCases: Int!, $generator: Int!) {
+$maxCases: Int!, $generator: String!) {
   createReportrequest (input: {
     reportrequest: {
       id: $id,
@@ -54,7 +54,7 @@ function logReportRequest(data, user) {
 }
 const newReportMutation = `
 mutation newReport($id: String!, $title: String!,
-$url: String!, $request: String!, $generator: Int!) {
+$url: String!, $request: String!, $generator: String!) {
   createReport(input: {report: {
     id: $id,
     title: $title,
@@ -112,7 +112,7 @@ function bind(io) {
 
   return io.on('connection', (socket) => {
     let user = socket.request.user.user;
-    socket.user = parseInt(user.slice(1, user.length));
+    socket.user = user;
 
     // registerUser(socket.user, socket.request.user);
 
