@@ -31,13 +31,13 @@
             <tr v-for="row in report.casesByReport.nodes"
                 v-bind:key="row.id">
                 <td>{{row.id}}</td>
-                <td class="center aligned">{{row.student1.id}}</td>
-                <td :data-sort-value="row.student1.percent" class="center aligned">{{row.student1.percent}}%</td>
-                <td class="center aligned">{{row.student2.id}}</td>
-                <td :data-sort-value="row.student2.percent" class="center aligned">{{row.student2.percent}}%</td>
+                <td class="center aligned">{{row.student1}}</td>
+                <td :data-sort-value="row.student1Percent" class="center aligned">{{row.student1Percent}}%</td>
+                <td class="center aligned">{{row.student2}}</td>
+                <td :data-sort-value="row.student2Percent" class="center aligned">{{row.student2Percent}}%</td>
                 <td :data-sort-value="row.lines" class="center aligned">{{row.lines}}</td>
                 <td>
-                    <a :href="row.case">
+                    <a :href="report.url + '/match' + row.id + '.html'">
                         <button class="ui icon button" role="button">
                             <i class="angle right icon"></i>
                         </button>

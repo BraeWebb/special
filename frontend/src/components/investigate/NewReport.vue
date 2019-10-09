@@ -18,8 +18,13 @@
                     />
                     <br/>
                     <div class="ui left icon fluid input">
-                        <input type="text" placeholder="Max Matches" v-model="report.maxMatches">
+                        <input type="number" placeholder="Max Matches" v-model="report.maxMatches">
                         <i class="icon bullseye"></i>
+                    </div>
+                    <br/>
+                    <div class="ui left icon fluid input">
+                        <input type="number" placeholder="Max Cases" v-model="report.maxCases">
+                        <i class="icon thermometer full"></i>
                     </div>
                 </div>
                 <UploadBox :socket="socket" :logs.sync="logs" @uploaded="fileUploaded"></UploadBox>
@@ -80,9 +85,10 @@
           accepted: false,
           extracted: false,
           sent: false,
-          generated: false
+          generated: false,
+          parsed: false,
         },
-        result: null,
+        result: null
       }
     },
     methods: {
@@ -114,6 +120,7 @@
       this.socket.on("extracted", this.updateStep("extracted"));
       this.socket.on("sent", this.updateStep("sent"));
       this.socket.on("generated", this.updateStep("generated"));
+      this.socket.on("parsed", this.updateStep("parsed"));
 
       this.socket.on("generated", this.reportGenerated);
 

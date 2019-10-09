@@ -30,13 +30,13 @@ def parse(url):
             "case": case1,
             "student1": {
                 "id": snum1,
-                "percent": percent1[:-1]
+                "percent": int(percent1[:-1])
             },
             "student2": {
                 "id": snum2,
-                "percent": percent2[:-1],
+                "percent": int(percent2[:-1]),
             },
-            "lines": lines.text[:-1]
+            "lines": int(lines.text[:-1])
         }
         result.append(case)
     return result
@@ -61,8 +61,9 @@ def parse_case(url, case):
 
 def main():
     url = "http://moss.stanford.edu/results/937732643/"
-    report = parse_case(url, 0)
-    print(report)
+    print(parse(url))
+    # report = parse_case(url, 0)
+    # print(report)
 
 
 if __name__ == '__main__':

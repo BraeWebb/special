@@ -79,6 +79,39 @@ function logReport(id, request, url, user) {
   );
 }
 
+const newCaseMutation = `
+mutation addCase($id: Int!, $report: String!,
+$student1: String!, $student1Percent: Int!,
+$student2: String!, $student2Percent: Int!,
+$lines: Int!) {
+  createCase (input: {
+    case: {
+      id: $id,
+      report: $report,
+      student1: $student1,
+      student2: $student2,
+      student1Percent: $student1Percent,
+      student2Percent: $student2Percent,
+      lines: $lines
+    }
+  }) {
+    clientMutationId
+  }
+}`;
+function logCase(reportId, data) {
+  client.request(newCaseMutation,
+    {
+      "id": data["id"],
+      "report": reportId,
+      "student1": data["student1"]["id"],
+      "student1Percent": data["student1"]["percent"],
+      "student2": data["student2"]["id"],
+      "student2Percent": data["student2"]["percent"],
+      "lines": data["lines"],
+    }
+  );
+}
+
 
 function generateReport(io, socket) {
   return (data) => {
@@ -157,9 +190,15 @@ function bind(io) {
 
       if (channel === "report:generated") {
         let request = message['request'];
-        let reportId = generateID();
-        logReport(reportId, request, message['report'], socket.user);
+        logReport(request['id'], request, message['report'], socket.user);
         connection.emit('generated', message['report']);
+      }
+
+      if (channel === "report:parsed") {
+        for (let i in message["cases"]) {
+          logCase(message["reportId"], message["cases"][i]);
+        }
+        connection.emit('parsed', message["reportId"]);
       }
     });
 

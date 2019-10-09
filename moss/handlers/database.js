@@ -10,9 +10,25 @@ query {
   }
 }
 `;
-const getReportsQuery = `
+const getAllReportsQuery = `
 query {
   allReports {
+    nodes {
+      id,
+      title,
+      url,
+      request,
+      userByGenerator {
+        name
+      }
+    }
+  }
+}`;
+const getReportsQuery = `
+query getReports($userId: String!) {
+  allReports (condition: {
+    generator: $userId
+  }) {
     nodes {
       id,
       title,
@@ -36,6 +52,7 @@ query getReport($id: String!){
     },
     casesByReport {
       nodes {
+        id,
         student1,
         student2,
         student1Percent,
@@ -113,7 +130,7 @@ function bind(io) {
     });
 
     relay("reports", io, socket, (connection, data) => {
-      client.request(getReportsQuery).then((data) => {
+      client.request(getReportsQuery, {userId: user}).then((data) => {
         connection.emit('reports', data["allReports"]["nodes"]);
       });
     });
@@ -125,9 +142,7 @@ function bind(io) {
     });
 
     relay("user", io, socket, (connection, data) => {
-      console.log(user);
       client.request(getUserQuery, {id: user}).then((data) => {
-        console.log(data);
         connection.emit('user', data["userById"]);
       });
     });

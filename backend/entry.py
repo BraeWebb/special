@@ -4,6 +4,7 @@ import redis
 
 import moss
 import submissions
+import parser
 
 
 # TODO: Read extensions from the database
@@ -42,6 +43,17 @@ def listen(client, subscriber, channel):
 
             response = generate_report(data, console_logger,
                                        callback=lambda: client.publish("report:sent", json.dumps(data)))
+            client.publish("report:generated",
+                           json.dumps({"user": data['user'],
+                                       "report": response.url,
+                                       "request": data}))
+
+            parsed = parser.parse("http://moss.stanford.edu/results/27934986/")
+            client.publish("report:parsed",
+                           json.dumps({"user": data['user'],
+                                       "cases": parsed,
+                                       "reportId": data["id"]}))
+
             yield data['user'], response, data
 
 
@@ -76,7 +88,7 @@ def main():
 
     for user, report, data in listen(client, subscriber, "report"):
         print("Report Generated")
-        client.publish("report:generated", json.dumps({"user": user, "report": report.url, "request": data}))
+        # client.publish("report:generated", json.dumps({"user": user, "report": report.url, "request": data}))
 
 
 if __name__ == '__main__':
