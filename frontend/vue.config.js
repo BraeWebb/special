@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: "/public",
   pages: {
     index: {
       entry: 'src/main.js',
@@ -14,4 +15,4 @@ module.exports = {
       filename: 'integrity/index.html',
     }
   }
-}
+};
