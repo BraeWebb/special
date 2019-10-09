@@ -17,7 +17,12 @@
                 <td>{{row.title}}</td>
                 <td>{{row.userByGenerator.name}}</td>
                 <td>
-                    <a :href="row.url">
+                    <a :href="row.url" target="_blank">
+                        <button class="ui icon button" role="button">
+                            <i class="globe right icon"></i>
+                        </button>
+                    </a>
+                    <a :href="'/integrity/report/' + row.id" target="_blank">
                         <button class="ui icon button" role="button">
                             <i class="angle right icon"></i>
                         </button>

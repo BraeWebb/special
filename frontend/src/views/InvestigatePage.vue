@@ -21,8 +21,8 @@
 
         <ReportList v-if="display === 'list'" :socket="socket"></ReportList>
         <NewReportPage v-else-if="display === 'new'" :socket="socket"></NewReportPage>
-        <Report v-else-if="display === 'report'"></Report>
-        <Case v-else-if="display === 'case'"></Case>
+        <Report v-else-if="display === 'report'" :socket="socket"></Report>
+        <Case v-else-if="display === 'case'" :socket="socket"></Case>
     </div>
 </template>
 
@@ -40,9 +40,16 @@
 
   let display = "list";
 
-  let pathParts = window.location.pathname.split("/");
+  let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
+
   if (pathParts[pathParts.length - 1] === "new") {
     display = "new";
+  }
+  if (pathParts[pathParts.length - 2] === "report") {
+    display = "report";
+  }
+  if (pathParts[pathParts.length - 2] === "case") {
+    display = "case";
   }
 
   export default {

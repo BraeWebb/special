@@ -24,6 +24,28 @@ query {
     }
   }
 }`;
+const getReportQuery = `
+query getReport($id: String!){
+  reportById(id: $id) {
+    id,
+    title,
+    url,
+    userByGenerator {
+      id,
+      name
+    },
+    casesByReport {
+      nodes {
+        student1,
+        student2,
+        student1Percent,
+        student2Percent,
+        lines
+      }
+    }
+  }
+}
+`;
 
 function relay(command, io, socket, responder) {
   let request = "get" + command.charAt(0).toUpperCase() + command.slice(1);
@@ -53,6 +75,12 @@ function bind(io) {
     relay("reports", io, socket, (connection, data) => {
       client.request(getReportsQuery).then((data) => {
         connection.emit('reports', data["allReports"]["nodes"]);
+      });
+    });
+
+    relay("report", io, socket, (connection, data) => {
+      client.request(getReportQuery, {id: data["id"]}).then((data) => {
+        connection.emit('report', data["reportById"]);
       });
     });
   });
