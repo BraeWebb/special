@@ -1,6 +1,6 @@
 import os
+import re
 import zipfile
-from pathlib import Path
 
 
 def extract(path, ext, out="out"):
@@ -18,7 +18,9 @@ def extract(path, ext, out="out"):
         files = zip.namelist()
         for file in files:
             # get the student number
-            student = Path(file).parts[0]
+            print(file)
+            matches = re.search("(s[0-9]{6,7})", file)
+            student = matches.group(0)
             if not file.endswith(ext):
                 continue
 
@@ -30,8 +32,8 @@ def extract(path, ext, out="out"):
 
 
 def main():
-    path = "/Users/brae/projects/special/moss/uploaded/s44354008-brae.zip"
-    extract(path, "java")
+    path = "/Users/brae/Downloads/gradebook_CSSE1001S_6960_61141_Assignment202_2019-09-21-17-51-47.zip"
+    extract(path, "py")
 
 
 if __name__ == '__main__':
