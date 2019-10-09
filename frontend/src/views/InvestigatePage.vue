@@ -1,22 +1,28 @@
 <template>
     <div id="investigate">
-        <div class="ui top attached tabular menu">
-            <a class="item"
-               v-for="tab in tabs"
-               v-bind:key="tab.id"
-               v-bind:class="{active: currentTab === tab.id}"
-               v-on:click="currentTab = tab.id">
-                {{tab.title}}
-            </a>
+        <div class="ui menu">
+            <sui-dropdown item icon="book" simple>
+                Reports
+                <sui-dropdown-menu>
+                    <a class="ui item" href="/integrity/">List</a>
+                    <a class="ui item" href="/integrity/new">New</a>
+                </sui-dropdown-menu>
+            </sui-dropdown>
+
+            <div class="ui secondary menu right">
+                <sui-dropdown item icon="user" simple>
+                    Mr Webb
+                    <sui-dropdown-menu>
+                        <a class="ui item" href="/logout">Logout</a>
+                    </sui-dropdown-menu>
+                </sui-dropdown>
+            </div>
         </div>
 
-        <keep-alive>
-        <ReportList v-if="currentTab === 'list'" :socket="socket"></ReportList>
-        <NewReport v-if="currentTab === 'new'" :socket="socket" :logs.sync="logs"></NewReport>
-        <Console v-else-if="currentTab === 'log'" :logs.sync="logs"></Console>
-        <Report v-else-if="currentTab === 'report'"></Report>
-        <Case v-else-if="currentTab === 'case'"></Case>
-        </keep-alive>
+        <ReportList v-if="display === 'list'" :socket="socket"></ReportList>
+        <NewReportPage v-else-if="display === 'new'" :socket="socket"></NewReportPage>
+        <Report v-else-if="display === 'report'"></Report>
+        <Case v-else-if="display === 'case'"></Case>
     </div>
 </template>
 
@@ -24,51 +30,34 @@
   import io from 'socket.io-client';
 
   import ReportList from '../components/investigate/ReportList';
-  import NewReport from '../components/investigate/NewReport';
-  import Console from '../components/investigate/Console';
   import Report from '../components/investigate/Report';
   import Case from '../components/investigate/Case';
+  import NewReportPage from "./NewReportPage";
 
   let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
   let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
   let socket = io(host + ":" + port);
 
+  let display = "list";
+
+  let pathParts = window.location.pathname.split("/");
+  if (pathParts[pathParts.length - 1] === "new") {
+    display = "new";
+  }
+
   export default {
     name: 'InvestigatePage',
     components: {
+      NewReportPage,
       ReportList,
-      NewReport,
-      Console,
       Report,
       Case
     },
     data() {
       return {
-        tabs: {
-          "list": {id: "list", component: ReportList, title: "Report List"},
-          "new": {id: "new", component: NewReport, title: "Untitled"},
-          "log": {id: "log", component: Console, title: "Console Log"},
-          "report": {id: "report", component: Report, title: "Example Report"},
-          "case": {id: "case", component: Case, title: "Example Case"},
-        },
-        currentTab: "new",
-
-        logs: ["No logs yet... awaiting execution..."],
-
+        display: display,
         socket: socket,
-        error: null
       }
-    },
-    methods: {
-      socketDisconnect(err) {
-        this.error = err;
-        this.logs.push("Lost backend connection...");
-      },
-
-      socketReconnect(attempts) {
-        this.error = null;
-        this.logs.push("Re-established connection!");
-      },
     },
     mounted() {
       socket.on("connect_error", this.socketDisconnect);
