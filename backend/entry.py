@@ -6,6 +6,15 @@ import moss
 import submissions
 
 
+# TODO: Read extensions from the database
+LANGUAGE_EXTENSIONS = {
+    "python": "py",
+    "java": "java",
+    "c": "c",
+    "javascript": "js"
+}
+
+
 def listen(client, subscriber, channel):
     subscriber.subscribe(channel)
 
@@ -25,7 +34,9 @@ def listen(client, subscriber, channel):
             print(data)
             client.publish("report:accepted", json.dumps(data))
 
-            submissions.extract(data['report']['path'], data['report']['language'],
+            language = data['report']['language']
+            extension = LANGUAGE_EXTENSIONS.get(language, language)
+            submissions.extract(data['report']['path'], extension,
                                 out=os.path.join("data", data["id"]))
             client.publish("report:extracted", json.dumps(data))
 
