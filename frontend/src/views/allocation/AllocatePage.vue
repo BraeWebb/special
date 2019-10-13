@@ -5,7 +5,7 @@
                 hi
             </sui-tab-pane>
             <sui-tab-pane title="Tutors">
-                <TutorList v-bind:tutors="tutors"></TutorList>
+                <TutorList v-bind:tutors="tutors" v-bind:sessions="sessions"></TutorList>
             </sui-tab-pane>
             <sui-tab-pane title="Classes">
                 <ClassList v-bind:sessions="sessions"></ClassList>
@@ -19,70 +19,87 @@
 </template>
 
 <script>
-  import TutorList from '../../components/allocation/TutorList.vue'
-  import ClassList from '../../components/allocation/ClassList.vue'
+    import TutorList from '../../components/allocation/TutorList.vue'
+    import ClassList from '../../components/allocation/ClassList.vue'
 
-  export default {
-    name: "Alloc",
-    components: {
-      TutorList,
-      ClassList
-    },
-    data () {
-      return {
-        tutors: [
-          {
-            "name": "HOB",
-            "availability": ["T01"],
-            "max_hrs": 10,
-            "junior": false,
-            "tpref": true,
-            "ppref": false
-          },
-          {
-            "name": "BW",
-            "availability": ["T01", "P01"],
-            "max_hrs": 20,
-            "junior": false,
-            "tpref": false,
-            "ppref": true
-          },
-          {
-            "name": "KT",
-            "availability": ["P01"],
-            "max_hrs": 5,
-            "junior": true,
-            "tpref": false,
-            "ppref": false
-          },
-          {
-            "name": "SS",
-            "availability": ["T01", "P01"],
-            "max_hrs": 20,
-            "junior": false,
-            "tpref": true,
-            "ppref": true
-          },
-        ],
-        sessions: [
-          {
-            "id": "T01",
-            "day": "Mon",
-            "time": 8,
-            "duration": 1,
-            "tutors": 2
-          },
-          {
-            "id": "P01",
-            "day": "Wed",
-            "time": 14,
-            "duration": 2,
-            "tutors": 2
-          }
-        ],
-      };
+    export default {
+        name: "Alloc",
+        components: {
+            TutorList,
+            ClassList
+        },
+        data() {
+            return {
+                // Note: using the wrong variable naming style so it's consistent with the python script
+                tutors: [
+                    {
+                        "name": "Henry",
+                        "lower_hr_limit": 4,
+                        "upper_hr_limit": 6,
+                        "lower_type_limits": {"T": 2, "P": 2, "U": 0},
+                        "is_junior": false,
+                        "daily_max": 4,
+                        "pref_contig": false
+                    },
+                    {
+                        "name": "Brae",
+                        "lower_hr_limit": 4,
+                        "upper_hr_limit": 10,
+                        "lower_type_limits": {"T": 0, "P": 4, "U": 0},
+                        "is_junior": false,
+                        "daily_max": 10,
+                        "pref_contig": true
+                    },
+                    {
+                        "name": "Emily",
+                        "lower_hr_limit": 4,
+                        "upper_hr_limit": 8,
+                        "lower_type_limits": {"T": 1, "P": 1, "U": 0},
+                        "is_junior": true,
+                        "daily_max": 6,
+                        "pref_contig": true
+                    },
+                    {
+                        "name": "Peter",
+                        "lower_hr_limit": 2,
+                        "upper_hr_limit": 6,
+                        "lower_type_limits": {"T": 0, "P": 0, "U": 0},
+                        "is_junior": false,
+                        "daily_max": 4,
+                        "pref_contig": false
+                    },
+                ],
+                sessions: [
+                    {
+                        "id": "T01",
+                        "day": "Mon",
+                        "start_time": 9,
+                        "duration": 1,
+                        "lower_tutor_count": 2,
+                        "upper_tutor_count": 2
+                    },
+                    {
+                        "id": "P01",
+                        "day": "Mon",
+                        "start_time": 10,
+                        "duration": 2,
+                        "lower_tutor_count": 2,
+                        "upper_tutor_count": 2
+                    }
+                ],
+                availability: {
+                    "Henry-T01": true,
+                    "Henry-P01": true,
+                    "Brae-T01": true,
+                    "Brae-P01": true,
+                    "Emily-T01": true,
+                    "Emily-P01": true,
+                    "Peter-T01": true,
+                    "Peter-P01": true
+                }
+            };
+        }
     }
-  }
 </script>
 
 <style scoped>
