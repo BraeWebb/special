@@ -3,10 +3,21 @@ import json
 import redis
 
 import moss
+import submissions
+import parser
 
 
-def listen(subscriber, channel, handler):
-    subscriber.subscribe("report")
+# TODO: Read extensions from the database
+LANGUAGE_EXTENSIONS = {
+    "python": "py",
+    "java": "java",
+    "c": "c",
+    "javascript": "js"
+}
+
+
+def listen(client, subscriber, channel):
+    subscriber.subscribe(channel)
 
     while True:
         message = subscriber.get_message()
@@ -16,8 +27,34 @@ def listen(subscriber, channel, handler):
                 continue
 
             data = json.loads(message['data'])
-            response = handler(data)
-            yield data['user'], response
+
+            console_logger = lambda msg: client.publish("report:log", json.dumps({
+                "msg": msg,
+                "user": data["user"]
+            }))
+            print(data)
+            client.publish("report:accepted", json.dumps(data))
+
+            language = data['report']['language']
+            extension = LANGUAGE_EXTENSIONS.get(language, language)
+            submissions.extract(data['report']['path'], extension,
+                                out=os.path.join("data", data["id"]))
+            client.publish("report:extracted", json.dumps(data))
+
+            response = generate_report(data, console_logger,
+                                       callback=lambda: client.publish("report:sent", json.dumps(data)))
+            client.publish("report:generated",
+                           json.dumps({"user": data['user'],
+                                       "report": response.url,
+                                       "request": data}))
+
+            parsed = parser.parse("http://moss.stanford.edu/results/27934986/")
+            client.publish("report:parsed",
+                           json.dumps({"user": data['user'],
+                                       "cases": parsed,
+                                       "reportId": data["id"]}))
+
+            yield data['user'], response, data
 
 
 def get_files(directory):
@@ -31,15 +68,16 @@ def get_files(directory):
     return submissions
 
 
-def generate_report(data):
+def generate_report(data, logger, callback=None):
     report = data['report']
     request = moss.ReportRequest(base_files=[],
-                                 submissions=get_files("~/moss/3506_test_subs"),
+                                 submissions=get_files(os.path.join("data", data["id"])),
                                  directory_mode=True,
                                  language=report['language'],
                                  max_matches=report['maxMatches'],
+                                 max_cases=report['maxCases'],
                                  comment=report['title'])
-    report = moss.Report.make_request(request)
+    report = moss.Report.make_request(request, logger=logger, sent_callback=callback)
 
     return report
 
@@ -48,9 +86,9 @@ def main():
     client = redis.Redis()
     subscriber = client.pubsub()
 
-    for user, report in listen(subscriber, "report", generate_report):
+    for user, report, data in listen(client, subscriber, "report"):
         print("Report Generated")
-        client.publish(f"generated", json.dumps({"user": user, "report": report.url}))
+        # client.publish("report:generated", json.dumps({"user": user, "report": report.url, "request": data}))
 
 
 if __name__ == '__main__':
