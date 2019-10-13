@@ -78,7 +78,7 @@ class Report:
                 connection.send(line)
 
     @classmethod
-    def make_request(cls, request: ReportRequest):
+    def make_request(cls, request: ReportRequest, logger=print, sent_callback=None):
         report = cls(request)
 
         with MockSocket(socket.AF_INET, socket.SOCK_STREAM) as connection:
@@ -96,19 +96,23 @@ class Report:
             if data.strip() == "no":
                 connection.send(b'end\n')
                 connection.close()
+                logger(f"ERROR: Unsupported language: {request.language}")
                 raise UnsupportedLanguageException(f"Unsupported language: {request.language}")
 
             file_id = 1
             for file, submission in request.submissions:
+                logger(f"Uploading file {file}...")
                 report._upload_file(connection, file_id, file, submission)
                 file_id += 1
 
             connection.sendall(b'query 0 %s\n' % request.comment.encode())
+            logger(f"Request sent. Awaiting response.")
 
-            print("Request sent, waiting for reply")
+            if sent_callback is not None:
+                sent_callback()
 
-            report.url = connection.recv(1024).decode()
-            print(report.url)
+            report.url = connection.recv(1024).decode().strip()
+            logger(f"Request generated: {report.url}")
 
             connection.send(b'end\n')
             connection.close()

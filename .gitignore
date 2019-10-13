@@ -95,3 +95,6 @@ db/data
 
 # redis database
 db/redis
+
+backend/data
+moss/uploaded
