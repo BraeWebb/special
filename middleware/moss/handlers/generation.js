@@ -5,18 +5,14 @@
  */
 
 let SocketIOFile = require('socket.io-file');
-let redis = require("redis");
 let path = require("path");
-let client = require("../database");
+
+let {createClient} = require("../util/redis-client");
+let client = require("../util/database");
 let generateID = require("../util/id");
 
-let redisServer = {
-  host: process.env.REDIS_SERVER ? process.env.REDIS_SERVER : "localhost",
-  port: process.env.REDIS_PORT ? process.env.REDIS_PORT : "6379"
-};
-
-let subscriber = redis.createClient(redisServer);
-let publisher = redis.createClient(redisServer);
+let subscriber = createClient();
+let publisher = createClient();
 
 const newRequestMutation = `
 mutation newRequest($id: String!, $title: String!,

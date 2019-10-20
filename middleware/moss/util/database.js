@@ -5,7 +5,7 @@ let port = process.env.GRAPHQL_PORT ? process.env.GRAPHQL_PORT : "5000";
 let address = server + ":" + port;
 let endpoint = "http://" + address + "/graphql";
 
-console.log("Integrity connecting to GraphQL on " + address);
+console.log("Connecting to GraphQL on " + address);
 const client = new GraphQLClient(endpoint, { headers: {} });
 
 module.exports = client;
