@@ -1,4 +1,4 @@
-let client = require("../database");
+let client = require("../util/database");
 
 const getLanguagesQuery = `
 query {

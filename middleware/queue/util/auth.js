@@ -61,7 +61,12 @@ function dummyAuth(req, res, next) {
 function socketWrapper(wrapee) {
   return (packet, next) => {
 
-    packet.request.cookies = packet.handshake.headers;
+    packet.request.cookies = {};
+    let cookies = packet.handshake.headers.cookie.split("; ");
+    for (let i in cookies) {
+      let parts = cookies[i].split("=");
+      packet.request.cookies[parts[0]] = parts[1];
+    }
     packet.request.next = next;
 
     let res = express.response;

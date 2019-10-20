@@ -45,7 +45,7 @@ services:
     restart: always
     image: queue
     build:
-      context: ./queue
+      context: ./middleware/queue
     depends_on:
       - graphql
     environment:
@@ -63,7 +63,7 @@ services:
     restart: always
     image: moss
     build:
-      context: ./moss
+      context: ./middleware/moss
     depends_on:
       - graphql
       - redis
