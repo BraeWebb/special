@@ -6,6 +6,7 @@
                 <sui-dropdown-menu>
                     <a class="ui item" href="/integrity/">List</a>
                     <a class="ui item" href="/integrity/new">New</a>
+                    <a class="ui item" href="/integrity/case/1234">Example Case</a>
                 </sui-dropdown-menu>
             </sui-dropdown>
 

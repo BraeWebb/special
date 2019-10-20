@@ -65,7 +65,7 @@ function leaveQueue(io, socket) {
 function bind(io) {
   return io.on('connection', (socket) => {
     let user = socket.request.user.user;
-    socket.user = parseInt(user.slice(1, user.length));
+    socket.user = user;
 
     registerUser(socket.user, socket.request.user);
 
