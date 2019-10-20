@@ -14,6 +14,7 @@ let publisher = createClient();
 
 
 function allocate(io, socket) {
+  console.log("help");
   return (data) => {
     let user = socket.request.user.user;
     data['user'] = user;

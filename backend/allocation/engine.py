@@ -11,6 +11,22 @@ class Engine:
         self._sessions = sessions
         self._avail = avail
 
+        self.generate_decls()
+        self.assert_avail()
+
+        for session in sessions:
+            self.assert_tutor_count(session)
+
+        for tutor in tutors:
+            self.assert_upper_hr_limit(tutor)
+            self.assert_upper_hr_limit(tutor)
+            self.assert_daily_max(tutor)
+
+        self.assert_juniors()
+        self.assert_clashes()
+        self.maximize_tutor_count()
+        self.maximize_contig()
+
     def generate_decls(self):
         for tutor in self._tutors:
             for session in self._sessions:
@@ -100,13 +116,10 @@ class Engine:
     def solve(self):
         solver = cp_model.CpSolver()
         status = solver.Solve(self._model)
-        print(status == cp_model.OPTIMAL)
         if status in (cp_model.FEASIBLE, cp_model.OPTIMAL):
             result = {}
             for tutor, session in self._vars:
-                if solver.Value(self._vars[(tutor, session)]) == 0:
-                    result[(tutor.get_name(), session.get_id())] = False
-                else:
-                    result[(tutor.get_name(), session.get_id())] = True
+                if solver.Value(self._vars[(tutor, session)]) > 0:
+                    result[tutor.get_name()] = result.get(tutor.get_name(), []) + [session.get_id()]
             return result
-        return {}
+        return None

@@ -31,23 +31,12 @@
     import ClassItem from './ClassItem.vue'
     import UploadBox from '../UploadBox.vue'
 
-    import io from 'socket.io-client';
-
-    let host = process.env.VUE_APP_ALLOC_HOST ? process.env.VUE_APP_ALLOC_HOST : "localhost";
-    let port = process.env.VUE_APP_ALLOC_PORT ? process.env.VUE_APP_ALLOC_PORT : "3051";
-    let socket = io(host + ":" + port);
-
     export default {
         name: "ClassList",
-        props: ["sessions"],
+        props: ["sessions", "socket", "download"],
         components: {
             ClassItem,
             UploadBox
-        },
-        data () {
-            return {
-                socket: socket
-            }
         },
         methods: {
             add: function(sessionId) {
@@ -78,7 +67,7 @@
                     result += [session.id, session.lower_tutor_count, session.upper_tutor_count, session.day,
                         session.time, session.duration].join(",") + "\n";
                 }
-                download("classes.csv", result);
+                this.download("classes.csv", result);
             },
             infoFileUploaded: function (fileInfo) {
 
@@ -86,18 +75,6 @@
         }
     }
 
-    function download(filename, text) {
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', filename);
-
-        element.style.display = 'none';
-        document.body.appendChild(element);
-
-        element.click();
-
-        document.body.removeChild(element);
-    }
 </script>
 
 <style scoped>
