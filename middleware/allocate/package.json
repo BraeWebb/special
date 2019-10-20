@@ -1,0 +1,22 @@
+{
+  "name": "queue",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dtrace-provider": "^0.8.8",
+    "express": "~4.16.1",
+    "graphql-request": "^1.8.2",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1",
+    "redis": "^2.8.0",
+    "socket.io": "^2.2.0",
+    "socket.io-file": "^2.0.31",
+    "uqsso": "^1.0.0"
+  }
+}

@@ -1,10 +1,11 @@
 <template>
     <div>
+
     <sui-table celled striped>
         <sui-table-header>
             <sui-table-row>
                 <sui-table-headerCell>Tutor</sui-table-headerCell>
-                <sui-table-headerCell>Weely Hours</sui-table-headerCell>
+                <sui-table-headerCell>Weekly Hours</sui-table-headerCell>
                 <sui-table-headerCell>Daily Hours</sui-table-headerCell>
                 <sui-table-headerCell>Class Hours</sui-table-headerCell>
                 <sui-table-headerCell>Junior?</sui-table-headerCell>
@@ -48,23 +49,13 @@
 <script>
     import TutorItem from './TutorItem.vue'
     import UploadBox from '../UploadBox.vue'
-    import io from 'socket.io-client';
-
-    let host = process.env.VUE_APP_ALLOC_HOST ? process.env.VUE_APP_ALLOC_HOST : "localhost";
-    let port = process.env.VUE_APP_ALLOC_PORT ? process.env.VUE_APP_ALLOC_PORT : "3051";
-    let socket = io(host + ":" + port);
 
     export default {
         name: "TutorList",
-        props: ["tutors", "sessions"],
+        props: ["tutors", "sessions", "socket", "download"],
         components: {
             TutorItem,
             UploadBox
-        },
-        data() {
-            return {
-                socket: socket
-            }
         },
         methods: {
             add: function(name) {
@@ -100,7 +91,7 @@
                         tutor.lower_type_limits.P, tutor.lower_type_limits.U, tutor.is_junior, tutor.daily_max,
                         tutor.pref_contig].join(",") + "\n";
                 }
-                download("tutors.csv", result);
+                this.download("tutors.csv", result);
             },
             generateAllocCSV: function(tutors, sessions) {
                 let result = "";
@@ -117,7 +108,7 @@
                         }
                     }
                 }
-                return result;
+                this.download("allocation.csv", result);
             },
             infoFileUploaded: function(fileInfo) {
 
@@ -126,19 +117,6 @@
 
             }
         }
-    }
-
-    function download(filename, text) {
-        var element = document.createElement('a');
-        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
-        element.setAttribute('download', filename);
-
-        element.style.display = 'none';
-        document.body.appendChild(element);
-
-        element.click();
-
-        document.body.removeChild(element);
     }
 </script>
 

@@ -63,7 +63,7 @@ def check_feasibility(avail):
     for tutor, session in avail:
         if avail[(tutor, session)]:
             tutor_avail[tutor] = tutor_avail.get(tutor, 0) + 1
-            session_avail[tutor] = session_avail.get(session, 0) + 1
+            session_avail[session] = session_avail.get(session, 0) + 1
 
     for tutor in tutor_avail:
         if tutor.lower_hr_limit > tutor_avail[tutor]:
