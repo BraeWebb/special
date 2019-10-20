@@ -25,6 +25,37 @@ class Session:
         return self._id
 
 
+def from_json(tutor_json, session_json):
+    tutors = {}
+    sessions = {}
+    avail = {}
+
+    for session_info in session_json:
+        session = Session(session_info.get("id"))
+        for key in session_info:
+            if key != "id":
+                setattr(session, key, session_info[key])
+        sessions[session.get_id()] = session
+
+    for tutor_info in tutor_json:
+        tutor = Tutor(tutor_info.get("name"))
+        for key in tutor_info:
+            if key not in ("availability", "name"):
+                setattr(tutor, key, tutor_info[key])
+        tutors[tutor.get_name()] = tutor
+
+        # generate all true availabilities
+        for session_name in tutor_info.get("availability", []):
+            avail[(tutor, sessions[session_name])] = True
+
+    # generate all false availabilites
+    for tutor in tutors.values():
+        for session in sessions.values():
+            avail[(tutor, session)] = avail.get((tutor, session), False)
+
+    return list(tutors.values()), list(sessions.values()), avail
+
+
 def check_feasibility(avail):
     tutor_avail = {}
     session_avail = {}

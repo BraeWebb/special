@@ -19,9 +19,10 @@
             </sui-table-body>
         </sui-table>
 
-        <sui-button class="spring-green-button" fluid v-on:click="generateCSV(sessions)">Download CSV</sui-button>
-        <br>
-        <sui-button fluid>Upload CSV</sui-button>
+        <div class="ui buttons">
+            <sui-button class="spring-green-button" v-on:click="add(name)">Download Availability CSV</sui-button>
+            <sui-button v-on:click="remove(name)">Upload Availability CSV</sui-button>
+        </div>
     </div>
 </template>
 
@@ -82,5 +83,8 @@
 </script>
 
 <style scoped>
-
+    .ui.buttons {
+        width: 70%;
+        padding-bottom: 10px;
+    }
 </style>

@@ -1,17 +1,14 @@
 <template>
     <div>
         <sui-tab>
-            <sui-tab-pane title="Main">
-                hi
+            <sui-tab-pane title="Allocation">
+                No
             </sui-tab-pane>
             <sui-tab-pane title="Tutors">
                 <TutorList v-bind:tutors="tutors" v-bind:sessions="sessions"></TutorList>
             </sui-tab-pane>
             <sui-tab-pane title="Classes">
                 <ClassList v-bind:sessions="sessions"></ClassList>
-            </sui-tab-pane>
-            <sui-tab-pane title="Allocation">
-                no
             </sui-tab-pane>
         </sui-tab>
     </div>
@@ -39,7 +36,8 @@
                         "lower_type_limits": {"T": 2, "P": 2, "U": 0},
                         "is_junior": false,
                         "daily_max": 4,
-                        "pref_contig": false
+                        "pref_contig": false,
+                        "availability": ["T01", "P01"]
                     },
                     {
                         "name": "Brae",
@@ -48,7 +46,8 @@
                         "lower_type_limits": {"T": 0, "P": 4, "U": 0},
                         "is_junior": false,
                         "daily_max": 10,
-                        "pref_contig": true
+                        "pref_contig": true,
+                        "availability": ["T01"]
                     },
                     {
                         "name": "Emily",
@@ -57,7 +56,8 @@
                         "lower_type_limits": {"T": 1, "P": 1, "U": 0},
                         "is_junior": true,
                         "daily_max": 6,
-                        "pref_contig": true
+                        "pref_contig": true,
+                        "availability": []
                     },
                     {
                         "name": "Peter",
@@ -66,7 +66,8 @@
                         "lower_type_limits": {"T": 0, "P": 0, "U": 0},
                         "is_junior": false,
                         "daily_max": 4,
-                        "pref_contig": false
+                        "pref_contig": false,
+                        "availability": ["P01"]
                     },
                 ],
                 sessions: [
@@ -86,17 +87,7 @@
                         "lower_tutor_count": 2,
                         "upper_tutor_count": 2
                     }
-                ],
-                availability: {
-                    "Henry-T01": true,
-                    "Henry-P01": true,
-                    "Brae-T01": true,
-                    "Brae-P01": true,
-                    "Emily-T01": true,
-                    "Emily-P01": true,
-                    "Peter-T01": true,
-                    "Peter-P01": true
-                }
+                ]
             };
         }
     }

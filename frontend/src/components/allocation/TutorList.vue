@@ -20,13 +20,19 @@
                        v-bind:minPracHrs="tutor.lower_type_limits.P" v-bind:minStudioHrs="tutor.lower_type_limits.U"
                        v-bind:isJunior="tutor.is_junior" v-bind:dailyMax="tutor.daily_max"
                        v-bind:prefContig="tutor.pref_contig" v-bind:sessions="sessions"
+                       v-bind:availability="tutor.availability"
                        v-bind:add="add" v-bind:remove="remove" />
         </sui-table-body>
     </sui-table>
 
-    <sui-button class="spring-green-button" fluid v-on:click="generateCSV(tutors)">Download CSV</sui-button>
-        <br>
-        <sui-button fluid v-on:click="this.console.log(tutors)">Upload CSV</sui-button>
+        <div class="ui buttons">
+            <sui-button class="spring-green-button" v-on:click="add(name)">Download Info CSV</sui-button>
+            <sui-button v-on:click="remove(name)">Upload Info CSV</sui-button>
+        </div><br>
+        <div class="ui buttons">
+            <sui-button class="spring-green-button" v-on:click="add(name)">Download Availability CSV</sui-button>
+            <sui-button v-on:click="remove(name)">Upload Availability CSV</sui-button>
+        </div>
     </div>
 </template>
 
@@ -90,5 +96,8 @@
 </script>
 
 <style scoped>
-
+    .ui.buttons {
+        width: 70%;
+        padding-bottom: 10px;
+    }
 </style>

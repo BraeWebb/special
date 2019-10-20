@@ -1,6 +1,6 @@
 from ortools.sat.python import cp_model
 from typing import List, Dict, Tuple
-from util import Tutor, Session
+from allocation.util import Tutor, Session
 
 
 class Engine:

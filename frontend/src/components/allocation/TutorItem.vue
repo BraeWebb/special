@@ -15,7 +15,7 @@
                 fluid
                 multiple
                 :options="sessionIds"
-                v-model="currentSessions"
+                v-model="availability"
         /></sui-table-cell>
         <sui-table-cell><div class="ui icon buttons">
             <button class="ui positive button" v-on:click="add(name)"><i class="plus icon"></i></button>
@@ -29,7 +29,7 @@
     export default {
         name: "TutorItem",
         props: ["name", "minHrs", "maxHrs", "minTuteHrs", "minPracHrs", "minStudioHrs", "isJunior", "dailyMax",
-            "prefContig", "sessions", "add", "remove"],
+            "prefContig", "sessions", "add", "remove", "availability"],
         data() {
             let sessionIds = [];
             for (let i = 0; i < this.sessions.length; i++) {
@@ -38,7 +38,7 @@
                    "value": this.sessions[i].id
                 });
             }
-            return {currentSessions: null, sessionIds: sessionIds};
+            return {sessionIds: sessionIds};
         }
     }
 </script>

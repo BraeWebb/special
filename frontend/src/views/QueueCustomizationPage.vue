@@ -36,10 +36,10 @@
                 <div>{{ signonSens }}</div>
             </sui-grid-column>
         </sui-grid-row>
-        <sui-grid-row columns="3">
+        <sui-grid-row columns="1">
             <sui-grid-column>
-                <h3>Testing Area</h3>
-                
+                <h3>Upload Signon Data</h3>
+                <UploadBox :socket="socket" :logs.sync="logs" @uploaded="fileUploaded"></UploadBox>
             </sui-grid-column>
         </sui-grid-row>
     </sui-grid>
@@ -47,15 +47,19 @@
 
 <script>
     import VueCircleSlider from 'vue-circle-slider'
+    import UploadBox from '../components/UploadBox.vue'
 
     export default {
         name: "QueueCustomization",
-        components: {VueCircleSlider},
+        components: {VueCircleSlider, UploadBox},
         props: ["dualQueues", "piazzaWarning", "waitTimeSens", "questionNumSens", "signonSens"],
         methods: {
             getPriority: function (waitTime, questionNum, signon) {
                 return waitTime * (this.waitTimeSens/5) + questionNum * 60 * (this.questionNumSens/5) +
                     (signon ? 0 : 1) * 120 * (this.signonSens/5);
+            },
+            fileUploaded: function (fileInfo) {
+
             }
         }
     }
