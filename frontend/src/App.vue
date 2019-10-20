@@ -5,6 +5,7 @@
       <router-link to="/queue" is="sui-menu-item">Queue</router-link>
       <router-link to="/allocate" is="sui-menu-item">Allocate</router-link>
       <router-link to="/investigate" is="sui-menu-item">Investigate</router-link>
+      <router-link to="/queue/customize" is="sui-menu-item">Customize Queue</router-link>
       <sui-menu-menu position="right">
         <sui-dropdown item icon="user" simple>
           Mr Webb

@@ -10,7 +10,7 @@
                 <sui-table-headerCell>Junior?</sui-table-headerCell>
                 <sui-table-headerCell>Prefer Contiguous?</sui-table-headerCell>
                 <sui-table-headerCell>Availability</sui-table-headerCell>
-                <sui-table-headerCell>Actions</sui-table-headerCell>
+                <sui-table-headerCell></sui-table-headerCell>
             </sui-table-row>
         </sui-table-header>
 
@@ -44,6 +44,7 @@
                 for (let i = 0; i < this.tutors.length; i++) {
                     if (name === this.tutors[i].name) {
                         this.tutors.splice(i + 1, 0, {
+                            "name": "New" + (i + 1),
                             "lower_hr_limit": 1,
                             "upper_hr_limit": 60,
                             "lower_type_limits": {"T": 0, "P": 0, "U": 0},
@@ -64,7 +65,7 @@
                 }
             },
             generateCSV: function(tutors) {
-                let result = "NAME,MAX_HRS,JUNIOR,TUTE_PREF,PRAC_PREF\n";
+                let result = "NAME,LOWER_HR_LIMIT,UPPER_HR_LIMIT,LOWER_,PRAC_PREF\n";
                 for (let i = 0; i < tutors.length; i++) {
                     let tutor = tutors[i];
                     result += tutor.name + "," + tutor.max_hrs + "," + tutor.junior + "," + tutor.tpref + "," + tutor.ppref + "\n";
