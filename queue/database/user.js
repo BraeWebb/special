@@ -10,7 +10,7 @@ const client = new GraphQLClient(endpoint, { headers: {} });
 
 
 const findUser = `
-query getUser($id: Int!) {
+query getUser($id: String!) {
   userById(id: $id) {
     id,
     name,
@@ -20,7 +20,7 @@ query getUser($id: Int!) {
 }`;
 
 const addUser = `
-mutation addUser($id: Int!, $name: String!) {
+mutation addUser($id: String!, $name: String!) {
   createUser (input: {
     user: {
       id: $id,

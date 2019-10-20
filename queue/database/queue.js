@@ -52,7 +52,7 @@ query getQueue($type: String!) {
 
 
 const joinMutation = `
-mutation joinQueue($asker: Int!, $type: String!) {
+mutation joinQueue($asker: String!, $type: String!) {
   createQueue (input: {
     queue: {
       asker: $asker,
@@ -67,7 +67,7 @@ mutation joinQueue($asker: Int!, $type: String!) {
 }`;
 
 const leaveMutation = `
-mutation leaveQueue($asker: Int!, $type: String!) {
+mutation leaveQueue($asker: String!, $type: String!) {
   deleteQueueByAskerAndType (input: { 
       asker: $asker,
       type: $type
@@ -110,11 +110,11 @@ function getQueue(queue) {
 }
 
 function join(user, queue) {
-  return client.request(joinMutation, {"asker": parseInt(user), "type": queue});
+  return client.request(joinMutation, {"asker": user, "type": queue});
 }
 
 function leave(user, queue) {
-  return client.request(leaveMutation, {"asker": parseInt(user), "type": queue});
+  return client.request(leaveMutation, {"asker": user, "type": queue});
 }
 
 

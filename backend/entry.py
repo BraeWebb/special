@@ -48,7 +48,7 @@ def listen(client, subscriber, channel):
                                        "report": response.url,
                                        "request": data}))
 
-            parsed = parser.parse("http://moss.stanford.edu/results/27934986/")
+            parsed = parser.parse(response.url)
             client.publish("report:parsed",
                            json.dumps({"user": data['user'],
                                        "cases": parsed,
