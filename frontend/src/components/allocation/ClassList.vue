@@ -33,8 +33,8 @@
 
     import io from 'socket.io-client';
 
-    let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
-    let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
+    let host = process.env.VUE_APP_ALLOC_HOST ? process.env.VUE_APP_ALLOC_HOST : "localhost";
+    let port = process.env.VUE_APP_ALLOC_PORT ? process.env.VUE_APP_ALLOC_PORT : "3051";
     let socket = io(host + ":" + port);
 
     export default {
