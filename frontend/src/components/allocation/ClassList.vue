@@ -19,20 +19,35 @@
             </sui-table-body>
         </sui-table>
 
-        <sui-button class="spring-green-button" fluid v-on:click="generateCSV(sessions)">Download CSV</sui-button>
-        <br>
-        <sui-button fluid>Upload CSV</sui-button>
+        <sui-button class="spring-green-button" v-on:click="generateCSV(sessions)"
+                    v-bind:style="'width: 100%'">Download Info CSV</sui-button><br>
+        <UploadBox :socket="socket" :logs.sync="logs" @uploaded="infoFileUploaded"
+                   :text="'Upload Info CSV'"
+                   v-bind:style="'padding-top: 10px;'"></UploadBox>
     </div>
 </template>
 
 <script>
     import ClassItem from './ClassItem.vue'
+    import UploadBox from '../UploadBox.vue'
+
+    import io from 'socket.io-client';
+
+    let host = process.env.VUE_APP_ALLOC_HOST ? process.env.VUE_APP_ALLOC_HOST : "localhost";
+    let port = process.env.VUE_APP_ALLOC_PORT ? process.env.VUE_APP_ALLOC_PORT : "3051";
+    let socket = io(host + ":" + port);
 
     export default {
         name: "ClassList",
         props: ["sessions"],
         components: {
-            ClassItem
+            ClassItem,
+            UploadBox
+        },
+        data () {
+            return {
+                socket: socket
+            }
         },
         methods: {
             add: function(sessionId) {
@@ -57,12 +72,16 @@
             },
             generateCSV: function (sessions) {
                 // TODO: make this work for new data
-                let result = "ID,DAY,TIME,DURATION,TUTORS\n";
+                let result = "ID,MIN_TUTORS,MAX_TUTORS,DAY,START_TIME,DURATION\n";
                 for (let i = 0; i < sessions.length; i++) {
                     let session = sessions[i];
-                    result += session.id + "," + session.day + "," + session.time + "," + session.duration + "," + session.tutors + "\n";
+                    result += [session.id, session.lower_tutor_count, session.upper_tutor_count, session.day,
+                        session.time, session.duration].join(",") + "\n";
                 }
                 download("classes.csv", result);
+            },
+            infoFileUploaded: function (fileInfo) {
+
             }
         }
     }
