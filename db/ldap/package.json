@@ -1,0 +1,14 @@
+{
+  "name": "ldap",
+  "version": "1.0.0",
+  "description": "Utilities for mocking and using LDAP interface in Node",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Brae Webb",
+  "dependencies": {
+    "ldapjs": "^1.0.2"
+  }
+}
