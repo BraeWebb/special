@@ -79,6 +79,27 @@ services:
       - graphql
       - redis
 
+  allocate:
+    container_name: allocate
+    restart: always
+    image: allocate
+    build:
+      context: ./middleware/allocate
+    depends_on:
+      - graphql
+      - redis
+    environment:
+      DEV: auth:*
+      GRAPHQL_SERVER: graphql
+      REDIS_SERVER: redis
+    expose:
+      - 3051
+    ports:
+      - 4051:3051
+    links:
+      - graphql
+      - redis
+
   dashboard:
     container_name: dashboard
     restart: always
@@ -88,11 +109,14 @@ services:
     depends_on:
       - queue
       - moss
+      - allocate
     environment:
       VUE_APP_QUEUE_PORT: 4000
       VUE_APP_MOSS_PORT: 4050
+      VUE_APP_ALLOC_PORT: 4051
     ports:
       - 5678:8080
     links:
       - queue
       - moss
+      - allocate
