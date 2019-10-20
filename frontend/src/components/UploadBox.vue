@@ -9,7 +9,7 @@
 
             <label v-else class="fluid" style="width: 100%; height: 100%;">
                 <i class="large archive file outline icon"></i>
-                <span v-if="uploadState === UploadState.NOT_STARTED">Upload a submissions zip</span>
+                <span v-if="uploadState === UploadState.NOT_STARTED">{{text}}</span>
                 <span v-if="uploadState === UploadState.FILE_SELECTED">{{file.name}}</span>
                 <input class="hide" type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
             </label>
@@ -29,7 +29,8 @@
     export default {
       props: [
         "socket",
-        "logs"
+        "logs",
+          "text"
       ],
       data() {
         return {

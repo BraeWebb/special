@@ -1,6 +1,6 @@
 from ortools.sat.python import cp_model
 from typing import List, Dict, Tuple
-from util import Tutor, Session
+from allocation.util import Tutor, Session
 
 
 class Engine:
@@ -102,5 +102,11 @@ class Engine:
         status = solver.Solve(self._model)
         print(status == cp_model.OPTIMAL)
         if status in (cp_model.FEASIBLE, cp_model.OPTIMAL):
+            result = {}
             for tutor, session in self._vars:
-                print(tutor.get_name(), session.get_id(), solver.Value(self._vars[(tutor, session)]))
+                if solver.Value(self._vars[(tutor, session)]) == 0:
+                    result[(tutor.get_name(), session.get_id())] = False
+                else:
+                    result[(tutor.get_name(), session.get_id())] = True
+            return result
+        return {}
