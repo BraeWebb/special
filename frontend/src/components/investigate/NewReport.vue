@@ -27,7 +27,8 @@
                         <i class="icon thermometer full"></i>
                     </div>
                 </div>
-                <UploadBox :socket="socket" :logs.sync="logs" @uploaded="fileUploaded"></UploadBox>
+                <UploadBox :socket="socket" :logs.sync="logs"
+                           :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
             </div>
             <sui-button class="ui fluid primary button attached"
                         :disabled="!(uploaded && report.language != null)"

@@ -38,8 +38,9 @@
         </sui-grid-row>
         <sui-grid-row columns="1">
             <sui-grid-column>
-                <h3>Upload Signon Data</h3>
-                <UploadBox :socket="socket" :logs.sync="logs" @uploaded="fileUploaded"></UploadBox>
+                <h3>Signon Data</h3>
+                <UploadBox :socket="socket" :logs.sync="logs"
+                           :text="'Upload signon data'" @uploaded="fileUploaded"></UploadBox>
             </sui-grid-column>
         </sui-grid-row>
     </sui-grid>

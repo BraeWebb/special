@@ -25,25 +25,46 @@
         </sui-table-body>
     </sui-table>
 
-        <div class="ui buttons">
-            <sui-button class="spring-green-button" v-on:click="add(name)">Download Info CSV</sui-button>
-            <sui-button v-on:click="remove(name)">Upload Info CSV</sui-button>
-        </div><br>
-        <div class="ui buttons">
-            <sui-button class="spring-green-button" v-on:click="add(name)">Download Availability CSV</sui-button>
-            <sui-button v-on:click="remove(name)">Upload Availability CSV</sui-button>
-        </div>
+
+        <sui-grid>
+            <sui-grid-row columns="2">
+                <sui-grid-column v-bind:style="'width: 50%'">
+                    <sui-button class="spring-green-button" v-on:click="generateInfoCSV(tutors)"
+                        v-bind:style="'width: 100%'">Download Info CSV</sui-button><br>
+                    <UploadBox :socket="socket" :logs.sync="logs" @uploaded="infoFileUploaded"
+                        :text="'Upload Info File'" v-bind:style="'padding-top: 10px;'"></UploadBox>
+                </sui-grid-column>
+                <sui-grid-column v-bind:style="'width: 50%'">
+                    <sui-button class="spring-green-button" v-on:click="generateAllocCSV(tutors, sessions)"
+                                v-bind:style="'width: 100%'">Download Availability CSV</sui-button><br>
+                    <UploadBox :socket="socket" :logs.sync="logs" @uploaded="availFileUploaded"
+                               :text="'Upload Availability File'" v-bind:style="'padding-top: 10px;'"></UploadBox>
+                </sui-grid-column>
+            </sui-grid-row>
+        </sui-grid>
     </div>
 </template>
 
 <script>
     import TutorItem from './TutorItem.vue'
+    import UploadBox from '../UploadBox.vue'
+    import io from 'socket.io-client';
+
+    let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
+    let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
+    let socket = io(host + ":" + port);
 
     export default {
         name: "TutorList",
         props: ["tutors", "sessions"],
         components: {
-            TutorItem
+            TutorItem,
+            UploadBox
+        },
+        data() {
+            return {
+                socket: socket
+            }
         },
         methods: {
             add: function(name) {
@@ -70,13 +91,39 @@
                     }
                 }
             },
-            generateCSV: function(tutors) {
-                let result = "NAME,LOWER_HR_LIMIT,UPPER_HR_LIMIT,LOWER_,PRAC_PREF\n";
+            generateInfoCSV: function(tutors) {
+                let result = "NAME,MIN_HRS,MAX_HRS,MIN_TUTE_HRS,MIN_PRAC_HRS,MIN_STUDIO_HRS,IS_JUNIOR,DAILY_MAX," +
+                    "PREF_CONTIG\n";
                 for (let i = 0; i < tutors.length; i++) {
                     let tutor = tutors[i];
-                    result += tutor.name + "," + tutor.max_hrs + "," + tutor.junior + "," + tutor.tpref + "," + tutor.ppref + "\n";
+                    result += [tutor.name, tutor.lower_hr_limit, tutor.upper_hr_limit, tutor.lower_type_limits.T,
+                        tutor.lower_type_limits.P, tutor.lower_type_limits.U, tutor.is_junior, tutor.daily_max,
+                        tutor.pref_contig].join(",") + "\n";
                 }
                 download("tutors.csv", result);
+            },
+            generateAllocCSV: function(tutors, sessions) {
+                let result = "";
+                for (let i = 0; i < tutors.length; i++) {
+                    result += "," + tutors[i].name;
+                }
+                for (let i = 0; i < sessions.length; i++) {
+                    result += sessions[i].id;
+                    for (let j = 0; j < tutors.length; i++) {
+                        if (tutors[j].availability.includes(sessions[i].id)) {
+                            result += ",A";
+                        } else {
+                            result += ",U";
+                        }
+                    }
+                }
+                return result;
+            },
+            infoFileUploaded: function(fileInfo) {
+
+            },
+            availFileUploaded: function(fileInfo) {
+
             }
         }
     }
@@ -96,8 +143,5 @@
 </script>
 
 <style scoped>
-    .ui.buttons {
-        width: 70%;
-        padding-bottom: 10px;
-    }
+
 </style>
