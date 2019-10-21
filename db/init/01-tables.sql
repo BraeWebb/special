@@ -23,25 +23,25 @@ CREATE TABLE IF NOT EXISTS special.Course (
 );
 
 CREATE TABLE IF NOT EXISTS special.Class (
+  id text NOT NULL,
   session text NOT NULL,
-  id text NOT NULL REFERENCES special.Course(id),
+  class text NOT NULL REFERENCES special.Course(id),
   start time,
   day text,
   duration integer,
-  PRIMARY KEY (session, id)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS special.Enrollment (
   user_id text NOT NULL REFERENCES special.User(id),
-  class text NOT NULL REFERENCES special.Class(session),
-  course text NOT NULL REFERENCES special.Course(id),
-  PRIMARY KEY (user_id, class, course)
+  class text NOT NULL REFERENCES special.Class(id),
+  PRIMARY KEY (user_id, class)
 );
 
 CREATE TABLE IF NOT EXISTS special.QueuePage (
   id text NOT NULL,
   owner text NOT NULL REFERENCES special.User(id),
-  PRIMARY KEY (queue)
+  PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS special.Queue (
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS special.QueuePrompts (
 
 CREATE TABLE IF NOT EXISTS special.Staff (
   user_id text NOT NULL REFERENCES special.User(id),
-  queue text NOT NULL REFERENCES special.QueuePage(queue),
+  queue text NOT NULL REFERENCES special.QueuePage(id),
   PRIMARY KEY (user_id, queue)
 );
 
