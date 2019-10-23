@@ -38,25 +38,22 @@ const server = new ApolloServer({
   playground: true,
   introspection: true,
   credentials: 'include',
-  context: ({ req }) => {
-    let currentUser = null;
-
+  context: async ({ req }) => {
     try {
-      ql(req, () => {
-        currentUser = req.user;
-        console.log(currentUser);
-      });
+      return {
+        currentUser: await ql(req).then(() => {
+          return req.user;
+        })
+      };
 
     } catch (e) {
       console.warn(`Unable to authenticate using cookies: ${JSON.stringify(req.cookies)}`);
     }
-
-    return {
-      currentUser,
-    };
   },
 });
 
-server.listen().then(({ url }) => {
+server.listen(
+  {host: "0.0.0.0", port: "4000"}
+).then(({ url }) => {
   console.log(`🚀  Server ready at ${url}`);
 });

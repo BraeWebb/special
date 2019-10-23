@@ -45,7 +45,7 @@ const DUMMY = {
 /**
  * Middleware for assigning the dummy user to the req.user.
  */
-function dummyAuth(req, res, next) {
+async function dummyAuth(req, res, next) {
   req.user = DUMMY;
   next();
 }
@@ -102,12 +102,12 @@ function socketWrapper(wrapee) {
 }
 
 function graphqlWrapper(wrapee) {
-  return (req, next) => {
+  return (req) => {
     req.cookies = parseCookies(req.headers.cookie);
 
     let res = mockResponse(req, () => {});
 
-    return wrapee(req, res, next)
+    return new Promise((resolve, reject) => wrapee(req, res, resolve));
   }
 }
 
