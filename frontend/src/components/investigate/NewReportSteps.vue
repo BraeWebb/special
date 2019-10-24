@@ -33,8 +33,14 @@
             </div>
             <div class="step" v-bind:class="{completed: steps.parsed}">
                 <div class="content">
-                    <div class="title">Report Parsed</div>
+                    <div class="title">Report Indexed</div>
                     <div class="description">Report URL Parsed</div>
+                </div>
+            </div>
+            <div class="step" v-bind:class="{completed: steps.fin}">
+                <div class="content">
+                    <div class="title">Cases Parsed</div>
+                    <div class="description">{{steps.cases}}/{{report.maxCases}} Cases Parsed</div>
                 </div>
             </div>
         </div>
@@ -53,6 +59,6 @@
 
 <script>
     export default {
-      props: ["steps", "result"]
+      props: ["steps", "result", "report"]
     }
 </script>

@@ -43,6 +43,8 @@ def listen(client, subscriber, channel):
 
             response = generate_report(data, console_logger,
                                        callback=lambda: client.publish("report:sent", json.dumps(data)))
+            # response = moss.Report(request=data)
+            # response.url = "http://moss.stanford.edu/results/853274249"
             client.publish("report:generated",
                            json.dumps({"user": data['user'],
                                        "report": response.url,
@@ -53,6 +55,13 @@ def listen(client, subscriber, channel):
                            json.dumps({"user": data['user'],
                                        "cases": parsed,
                                        "reportId": data["id"]}))
+
+            for case_id, case in parser.parse_cases(response.url, parsed):
+                client.publish("report:case",
+                               json.dumps({"user": data['user'],
+                                           "case": case,
+                                           "reportId": data["id"]}))
+                console_logger(f"Case {case_id} parsed.")
 
             yield data['user'], response, data
 
@@ -88,7 +97,8 @@ def main():
 
     for user, report, data in listen(client, subscriber, "report"):
         print("Report Generated")
-        # client.publish("report:generated", json.dumps({"user": user, "report": report.url, "request": data}))
+        client.publish("report:fin",
+                       json.dumps({"user": user}))
 
 
 if __name__ == '__main__':

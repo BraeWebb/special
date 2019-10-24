@@ -30,7 +30,7 @@ def parse(url):
             "case": case1,
             "student1": {
                 "id": snum1,
-                "percent": int(percent1[:-1])
+                "percent": int(percent1[:-1]),
             },
             "student2": {
                 "id": snum2,
@@ -42,8 +42,14 @@ def parse(url):
     return result
 
 
+def parse_cases(url, report):
+    for case in report:
+        yield case["id"], ((case["student1"]["id"], case["student2"]["id"]), parse_case(url, case["id"]))
+
+
 def parse_script(url):
     results = {}
+    print(url)
     page = requests.get(url)
     parsed_html = BeautifulSoup(page.text)
     for match in parsed_html.find("pre").text.split(">>>> file: ")[1:]:
@@ -53,8 +59,8 @@ def parse_script(url):
 
 
 def parse_case(url, case):
-    script0 = parse_script(url + f"match{case}-0.html")
-    script1 = parse_script(url + f"match{case}-1.html")
+    script0 = parse_script(url + f"/match{case}-0.html")
+    script1 = parse_script(url + f"/match{case}-1.html")
 
     return [script0, script1]
 

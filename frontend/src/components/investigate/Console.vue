@@ -1,6 +1,6 @@
 <template>
     <div class="ui fluid attached container inverted segment" style="text-align:left">
-        <p v-for="(log, index) in logs"
+        <p v-for="(log, index) in reverse(logs)"
            :key="index">
             {{log}}
         </p>
@@ -9,6 +9,11 @@
 
 <script>
     export default {
-      props: ["logs"]
+      props: ["logs"],
+      methods: {
+        reverse: function (array) {
+          return array.slice().reverse()
+        }
+      }
     }
 </script>

@@ -37,7 +37,7 @@
                 <td :data-sort-value="row.student2Percent" class="center aligned">{{row.student2Percent}}%</td>
                 <td :data-sort-value="row.lines" class="center aligned">{{row.lines}}</td>
                 <td>
-                    <a :href="report.url + '/match' + row.id + '.html'">
+                    <a :href="'/integrity/report/' + reportId + '/case/' + row.id">
                         <button class="ui icon button" role="button">
                             <i class="angle right icon"></i>
                         </button>

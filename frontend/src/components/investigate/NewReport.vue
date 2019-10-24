@@ -1,6 +1,6 @@
 <template>
     <div class="ui fluid attached container segment">
-        <NewReportSteps v-if="steps.started" :steps.sync="steps" :result.sync="result"></NewReportSteps>
+        <NewReportSteps v-if="steps.started" :report="report" :steps.sync="steps" :result.sync="result"></NewReportSteps>
         <div v-else class="ui stackable two column grid">
             <div class="stretched row">
                 <div class="column">
@@ -81,6 +81,7 @@
         },
 
         steps: {
+          cases: 0,
           started: false,
           queued: false,
           accepted: false,
@@ -88,6 +89,7 @@
           sent: false,
           generated: false,
           parsed: false,
+          fin: false,
         },
         result: null
       }
@@ -108,6 +110,10 @@
         this.result = data;
       },
 
+      caseParsed(data) {
+        this.steps.cases += 1;
+      },
+
       updateStep(step) {
         return (data) => {
           this.logs.push("Report " + step + ".");
@@ -122,6 +128,9 @@
       this.socket.on("sent", this.updateStep("sent"));
       this.socket.on("generated", this.updateStep("generated"));
       this.socket.on("parsed", this.updateStep("parsed"));
+      this.socket.on("fin", this.updateStep("fin"));
+
+      this.socket.on("case", this.caseParsed);
 
       this.socket.on("generated", this.reportGenerated);
 
