@@ -28,7 +28,7 @@
 
 
         <sui-grid>
-            <sui-grid-row columns="2">
+            <sui-grid-row cols="2">
                 <sui-grid-column v-bind:style="'width: 50%'">
                     <sui-button class="spring-green-button" v-on:click="generateInfoCSV(tutors)"
                         v-bind:style="'width: 100%'">Download Info CSV</sui-button><br>
@@ -38,8 +38,8 @@
                 <sui-grid-column v-bind:style="'width: 50%'">
                     <sui-button class="spring-green-button" v-on:click="generateAllocCSV(tutors, sessions)"
                                 v-bind:style="'width: 100%'">Download Availability CSV</sui-button><br>
-                    <UploadBox :socket="socket" :logs.sync="logs" @uploaded="availFileUploaded"
-                               :text="'Upload Availability File'" v-bind:style="'padding-top: 10px;'"></UploadBox>
+                    <!--<UploadBox :socket="socket" :logs.sync="logs" @uploaded="availFileUploaded"
+                               :text="'Upload Availability File'" v-bind:style="'padding-top: 10px;'"></UploadBox>-->
                 </sui-grid-column>
             </sui-grid-row>
         </sui-grid>
@@ -58,8 +58,36 @@
             TutorItem,
             UploadBox
         },
+        mounted() {
+            this.socket.on("tutorfile", (msg) => {
+                let lines = msg.trim().split("\n");
+                this.tutors = [];
+                for (let i = 1; i < lines.length; i++) {
+                    let line = lines[i].split(",");
+                    this.tutors.push({
+                        "name": line[0],
+                        "lower_hr_limit": parseInt(line[1]),
+                        "upper_hr_limit": parseInt(line[2]),
+                        "lower_type_limits": {
+                            "T": parseInt(line[3]),
+                            "P": parseInt(line[4]),
+                            "U": parseInt(line[5])
+                        },
+                        "is_junior": line[6] === "TRUE",
+                        "daily_max": parseInt(line[7]),
+                        "pref_contig": line[8] === "TRUE"
+                    });
+                }
+            });
+        },
+        data() {
+            return {
+                logs: []
+            }
+        },
         methods: {
             add: function(name) {
+                alert(this.logs);
                 for (let i = 0; i < this.tutors.length; i++) {
                     if (name === this.tutors[i].name) {
                         this.tutors.splice(i + 1, 0, {
@@ -112,7 +140,7 @@
                 this.download("allocation.csv", result);
             },
             infoFileUploaded: function(fileInfo) {
-
+                this.socket.emit("tutorfile", fileInfo);
             },
             availFileUploaded: function(fileInfo) {
 

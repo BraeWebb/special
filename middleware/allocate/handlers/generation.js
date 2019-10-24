@@ -9,12 +9,39 @@ let path = require("path");
 
 let {createClient} = require("../util/redis-client");
 
+const fs = require('fs');
+
 let subscriber = createClient();
 let publisher = createClient();
 
 
+function tutorFileUpload(io, socket) {
+  return (data) => {
+    console.log(data.name);
+    var text = fs.readFileSync("uploaded/" + data.name,'utf8');
+
+    let connection = io.sockets.sockets[socket.id];
+
+    connection.emit("tutorfile", text, function() {
+
+    });
+  };
+}
+
+function classFileUpload(io, socket) {
+  return (data) => {
+    console.log(data.name);
+    var text = fs.readFileSync("uploaded/" + data.name,'utf8');
+
+    let connection = io.sockets.sockets[socket.id];
+
+    connection.emit("classfile", text, function() {
+
+    });
+  };
+}
+
 function allocate(io, socket) {
-  console.log("help");
   return (data) => {
     let user = socket.request.user.user;
     data['user'] = user;
@@ -72,6 +99,8 @@ function bind(io) {
     });
 
     socket.on('allocate', allocate(io, socket));
+    socket.on('tutorfile', tutorFileUpload(io, socket));
+    socket.on('classfile', classFileUpload(io, socket));
   });
 }
 
