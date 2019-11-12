@@ -1,0 +1,15 @@
+{
+  "name": "special",
+  "version": "1.0.0",
+  "description": "Apollo Server for the Special Topics Project",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": "Brae Webb",
+  "dependencies": {
+    "apollo-server": "^2.9.7",
+    "graphql": "^14.5.8",
+    "uqsso": "^1.0.0"
+  }
+}
