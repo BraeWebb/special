@@ -1,8 +1,9 @@
 const { ApolloServer, makeExecutableSchema } = require('apollo-server');
 
 const typeDefs = require("./typedef");
-const auth = require("./auth");
+const auth = require("./util/auth");
 const resolvers = require("./resolvers/resolvers");
+const { createNewUsers } = require("./util/user");
 
 
 async function main() {
@@ -20,7 +21,7 @@ async function main() {
       try {
         return {
           currentUser: await auth.ql(req).then(() => {
-            return req.user;
+            return createNewUsers(req.user);
           })
         };
       } catch (e) {

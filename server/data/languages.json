@@ -1,0 +1,47 @@
+[
+  {
+    "id": "python",
+    "name": "Python",
+    "extensions": ["py"]
+  },
+  {
+    "id": "java",
+    "name": "Java",
+    "extensions": ["java"]
+  },
+  {
+    "id": "c",
+    "name": "C",
+    "extensions": ["c", "h"]
+  },
+  {
+    "id": "cc",
+    "name": "C++",
+    "extensions": ["cc"]
+  },
+  {
+    "id": "ml",
+    "name": "ML",
+    "extensions": ["ml"]
+  },
+  {
+    "id": "csharp",
+    "name": "C#",
+    "extensions": ["cs"]
+  },
+  {
+    "id": "matlab",
+    "name": "MATLAB",
+    "extensions": ["mat"]
+  },
+  {
+    "id": "vb",
+    "name": "Visual Basic",
+    "extensions": ["cls"]
+  },
+  {
+    "id": "javascript",
+    "name": "JavaScript",
+    "extensions": ["js"]
+  }
+]

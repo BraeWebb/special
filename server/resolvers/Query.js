@@ -1,5 +1,9 @@
+const lodash = require("lodash");
+
+const user = require("./query/user");
+const languages = require("./query/languages");
+const reports = require("./query/reports");
+
 module.exports = {
-  Query: {
-    me: (root, args, context) => context.currentUser,
-  }
+  Query: lodash.merge(user, languages, reports),
 };

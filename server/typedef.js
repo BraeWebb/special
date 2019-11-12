@@ -83,7 +83,7 @@ const typeDefs = gql`
   }
   
   type Case {
-    id: Int!
+    number: Int!
     report: Report!
     student1: StudentCase!
     student2: StudentCase!
@@ -96,11 +96,11 @@ const typeDefs = gql`
   type Query {
     me: User
     user(id: String!): User
-    myReports(status: ReportStatus): [Report]!
-    reports(status: ReportStatus, user: String): [Report]!
+    reports(status: ReportStatus): [Report]!
     report(id: String!): Report!
     cases(status: CaseStatus): [Case]!
     case(report: String!, id: Int!): Case!
+    languages: [Language!]!
   }
   
   type Mutation {
