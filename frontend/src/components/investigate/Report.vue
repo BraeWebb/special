@@ -1,8 +1,8 @@
 <template>
-    <div class="ui segment">
+    <div v-if="!loading" class="ui segment">
         <h2 class="ui header">{{report.title}}</h2>
         <a class="ui teal image label">
-            {{report.userByGenerator.name}}
+            {{report.generator.name}}
             <div class="detail">Generator</div>
         </a>
         <a class="ui green image label">
@@ -12,6 +12,10 @@
         <a class="ui blue image label">
             {{reportId}}
             <div class="detail">ID</div>
+        </a>
+        <a class="ui yellow image label">
+            {{report.status}}
+            <div class="detail">Status</div>
         </a>
 
         <table class="ui sortable celled table left aligned" id="user-table">
@@ -28,7 +32,7 @@
             </thead>
             <tbody>
 
-            <tr v-for="row in report.casesByReport.nodes"
+            <tr v-for="row in report.cases"
                 v-bind:key="row.id">
                 <td>{{row.id}}</td>
                 <td class="center aligned">{{row.student1}}</td>
@@ -51,34 +55,29 @@
 
 
 <script>
-    let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
+  import { GET_REPORT } from "../../queries/reports";
+
+  let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
     let reportId = pathParts[pathParts.length - 1];
 
     export default {
     name: 'Report',
-    props: [
-      'socket'
-    ],
     data() {
       return {
         reportId: reportId,
-        report: {
-          title: "Loading...",
-          generator: "",
-          url: "",
-          casesByReport: {
-            nodes: []
-          }
-        },
+        loading: 0
       }
     },
     mounted() {
       $('table').tablesort();
-
-      this.socket.emit("getReport", {id: reportId});
-      this.socket.on("report", (report) => {
-        this.report = report;
-      });
+    },
+    apollo: {
+      report: {
+        query: GET_REPORT,
+        variables: {
+          id: reportId
+        }
+      }
     }
   }
 </script>

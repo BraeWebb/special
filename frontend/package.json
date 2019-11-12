@@ -8,12 +8,18 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "apollo-cache-inmemory": "^1.6.3",
+    "apollo-client": "^2.6.4",
+    "apollo-link-http": "^1.5.16",
     "axios": "^0.19.0",
     "core-js": "^2.6.5",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
     "semantic-ui-vue": "^0.8.1",
     "socket.io-client": "^2.2.0",
     "socket.io-file-client": "^2.0.2",
     "vue": "^2.6.10",
+    "vue-apollo": "^3.0.0",
     "vue-circle-slider": "^1.0.2",
     "vue-router": "^3.1.2"
   },

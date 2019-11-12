@@ -10,9 +10,9 @@
                 </sui-dropdown-menu>
             </sui-dropdown>
 
-            <div class="ui secondary menu right">
+            <div v-if="!loading" class="ui secondary menu right">
                 <sui-dropdown item icon="user" simple>
-                    {{user.name}}
+                    {{me.name}}
                     <sui-dropdown-menu>
                         <a class="ui item" href="/logout">Logout</a>
                     </sui-dropdown-menu>
@@ -34,6 +34,8 @@
   import Report from '../components/investigate/Report';
   import Case from '../components/investigate/Case';
   import NewReportPage from "./NewReportPage";
+
+  import { ME } from '../queries/users';
 
   let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
   let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
@@ -65,16 +67,11 @@
       return {
         display: display,
         socket: socket,
-        user: {
-          name: "Loading"
-        }
+        loading: 0
       }
     },
-    mounted() {
-      this.socket.emit("getUser");
-      this.socket.on("user", (user) => {
-        this.user = user;
-      });
+    apollo: {
+      me: ME
     }
   }
 </script>
