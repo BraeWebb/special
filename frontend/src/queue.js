@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import SuiVue from 'semantic-ui-vue';
 import VueApollo from 'vue-apollo';
-import InvestigatePage from './views/InvestigatePage.vue';
+import QueuePage from './views/QueuePage.vue';
 
 import { ApolloClient } from 'apollo-client';
 import { HttpLink } from 'apollo-link-http';
@@ -51,6 +51,6 @@ const apolloProvider = new VueApollo({
 
 
 new Vue({
-  render: h => h(InvestigatePage),
+  render: h => h(QueuePage),
   apolloProvider: apolloProvider,
 }).$mount('#app');

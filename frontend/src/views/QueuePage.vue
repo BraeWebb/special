@@ -1,49 +1,61 @@
 <template>
-    <div id="queue" class="card-group">
-        <sui-card-group :items-per-row="2" v-bind:style="'width:100%'">
-            <Queue
-                    v-bind:socket="socket"
-                    v-bind:config="queue"
-                    v-bind:user="user"
-                    v-bind:key="queue.id"
-                    v-for="queue in queues"
-            />
-        </sui-card-group>
+    <div id="queue">
+        <div class="ui menu">
+            <sui-dropdown item icon="book" simple>
+                Queue
+                <sui-dropdown-menu>
+                    <a class="ui item" href="/queue/">List</a>
+                    <a class="ui item" href="/queue/new">New</a>
+                </sui-dropdown-menu>
+            </sui-dropdown>
+
+            <div v-if="!loading" class="ui secondary menu right">
+                <sui-dropdown item icon="user" simple>
+                    {{me.name}}
+                    <sui-dropdown-menu>
+                        <a class="ui item" href="/profile">Profile</a>
+                        <a class="ui item" href="/logout">Logout</a>
+                    </sui-dropdown-menu>
+                </sui-dropdown>
+            </div>
+        </div>
+
+        <QueuePageList v-if="display === 'list'"></QueuePageList>
+        <Queue v-if="display === 'queue'"></Queue>
     </div>
 </template>
 
 <script>
-  import Queue from '../components/Queue.vue'
-  import io from 'socket.io-client';
+  import { ME } from '../queries/users';
+  import QueuePageList from "../components/queue/QueueList";
+  import Queue from "../components/queue/Queue";
 
-  let host = process.env.VUE_APP_QUEUE_HOST ? process.env.VUE_APP_QUEUE_HOST : "localhost";
-  let port = process.env.VUE_APP_QUEUE_PORT ? process.env.VUE_APP_QUEUE_PORT : "3000";
-  let socket = io(host + ":" + port);
+  let display = "list";
+
+  let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
+
+  if (pathParts[pathParts.length - 1] === "new") {
+    display = "new";
+  }
+  if (pathParts[pathParts.length - 2] === "queue") {
+    display = "queue";
+  }
 
   export default {
     name: 'QueuePage',
     components: {
-      Queue
+      Queue,
+      QueuePageList
     },
     data() {
       return {
-        queues: [
-          {
-            "id": "quick",
-            "title": "Quick Questions",
-            "width": "45%",
-            "height": "100%",
-          },
-          {
-            "id": "long",
-            "title": "Long Questions",
-            "width": "45%",
-            "height": "100%",
-          }
-        ],
-        socket: socket
-      };
+        display: display,
+        loading: 0
+      }
     },
+    apollo: {
+      me: ME
+    }
   }
 </script>
 

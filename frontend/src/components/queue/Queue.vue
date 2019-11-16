@@ -1,110 +1,75 @@
 <template>
-  <sui-card :id="config.id" v-bind:style="'width:' + config.width + '; height:' + config.height" class="ui container center aligned">
-    <sui-card-content>
-      <sui-card-header>
-        <h1>{{config.title}}</h1>
-      </sui-card-header>
-    </sui-card-content>
+  <div v-if="!loading" class="ui fluid container card-group">
+    <h1>{{page.title}}</h1>
+    <sui-card-group :items-per-row="2" v-bind:style="'width:100%'">
+      <sui-card
+              v-for="config in page.queues"
+              v-bind:key="config.id"
+              v-bind:style="'width:' + config.width + '; height:' + config.height"
+              class="ui container center aligned">
+        <sui-card-content>
+          <sui-card-header>
+            <h1>{{config.title}}</h1>
+            {{config.description}}
+          </sui-card-header>
+        </sui-card-content>
 
-    <sui-button v-if="!joined" positive attached="bottom" v-on:click="joinQueue" class="spring-green-button">
-      <sui-icon name="add" /> Join
-    </sui-button>
-    <sui-button v-if="joined" attached="bottom" v-on:click="leaveQueue" color="red">
-      <sui-icon name="minus" /> Leave
-    </sui-button>
+        <sui-button positive attached="bottom" class="spring-green-button">
+          <sui-icon name="add" /> Join
+        </sui-button>
+        <sui-button attached="bottom" color="red">
+          <sui-icon name="minus" /> Leave
+        </sui-button>
 
-    <sui-card-content>
-      <sui-table basic="very" celled>
-        <sui-table-header>
-          <tr>
-            <th>Name</th>
-            <th>Questions asked</th>
-            <th>Wait time</th>
-            <th>Signed on</th>
-            <th></th>
-          </tr>
-        </sui-table-header>
-        <sui-table-body>
-          <QueueItem
-                  v-for="waiter in waiting"
-                  v-bind:key="waiter.id"
-                  v-bind:user="waiter"
+        <sui-card-content>
+          <sui-table basic="very" celled>
+            <sui-table-header>
+              <tr>
+                <th>Name</th>
+                <th>Questions asked</th>
+                <th>Wait time</th>
+                <th>Signed on</th>
+                <th></th>
+              </tr>
+            </sui-table-header>
+            <sui-table-body>
+              <QueueItem
+                      v-for="waiter in waiting"
+                      v-bind:key="waiter.id"
+                      v-bind:user="waiter"
 
-                  v-bind:config="config"
-                  v-bind:socket="socket"
-          />
-        </sui-table-body>
-      </sui-table>
-    </sui-card-content>
-  </sui-card>
+                      v-bind:config="config"
+                      v-bind:socket="socket"
+              />
+            </sui-table-body>
+          </sui-table>
+        </sui-card-content>
+      </sui-card>
+    </sui-card-group>
+  </div>
 </template>
 
 
 <script>
-import QueueItem from "./QueueItem";
+  import { GET_QUEUE } from "../../queries/queues";
 
-export default {
-  name: 'Queue',
-  components: {
-    QueueItem
-  },
-  props: [
-    "config",
-    "socket",
-    "user",
-  ],
-  data() {
-    return {
-      waiting: [],
-      joined: false
-    }
-  },
-  methods: {
-    updateJoined(inverse) {
-      return (data) => {
-        this.joined = data["queue"] === this.config.id;
-        if (inverse && this.joined) {
-          this.joined = !this.joined;
+  let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
+  let queueId = pathParts[pathParts.length - 1];
+
+  export default {
+    name: 'Queue',
+    data() {
+      return {
+        loading: 0
+      }
+    },
+    apollo: {
+      page: {
+        query: GET_QUEUE,
+        variables: {
+          id: queueId
         }
       }
-    },
-    joinQueue(e) {
-      e.preventDefault();
-
-      this.socket.emit('join', {
-        user: {
-          id: Math.floor(Math.random() * 3000), // Simulate random users joining
-          name: "Mr Maybe",
-          questions_asked: 0,
-          signed_on: true,
-          join_time: new Date().toLocaleString(),
-        },
-        queue: this.config.id
-      });
-    },
-    leaveQueue(e) {
-      e.preventDefault();
-
-      this.socket.emit('leave', {
-        user: this.user,
-        queue: this.config.id
-      });
-    },
-  },
-  mounted() {
-    this.socket.on('update', (data) => {
-      if (data["queue"] === this.config.id) {
-        this.waiting = Object.values(data["waiting"]);
-      }
-    });
-    this.socket.on('joined', this.updateJoined(false));
-    this.socket.on('left', this.updateJoined(true));
+    }
   }
-}
 </script>
-
-<!--<style scoped>-->
-    <!--#queue {-->
-        <!--float: left;-->
-    <!--}-->
-<!--</style>-->
