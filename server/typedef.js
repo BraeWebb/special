@@ -94,25 +94,62 @@ const typeDefs = gql`
     status: CaseStatus
   }
   
+  type QueueConfig {
+    signedOn: Int!
+    questionsAsked: Int!
+    waitTime: Int!
+    autoClear: Boolean
+  }
+  
+  type QueuePage {
+    id: String!
+    owner: User!
+    queues: [Queue!]!
+  }
+  
+  type Waiting {
+    user: User!
+    joined: Time!
+  }
+  
+  type Queue {
+    id: String!
+    title: String!
+    description: String
+    page: QueuePage
+    config: QueueConfig!
+    waiting: [Waiting!]!
+  }
+  
   type Query {
     me: User
     user(id: String!): User
+    
     reports(status: ReportStatus): [Report]!
     report(id: String!): Report!
     cases(report: String!, status: CaseStatus): [Case]!
     case(report: String!, id: Int!): Case
     languages: [Language!]!
+    
+    queue(id: String!): Queue
+    queuePage(id: String!): QueuePage
+    queuePages: [QueuePage!]! 
   }
   
   type Mutation {
     requestReport(title: String!, file: String!, language: String!, maxMatches: Int, maxCases: Int): Report!
     comment(report: String!, case: Int!, content: String!, line: Int, parent: ID): Comment!
+    
+    newQueuePage: QueuePage
+    newQueue(title: String!, description: String, page: String): Queue
+    configureQueue(id: String!, signedOn: Int, questionsAsked: Int, waitTime: Int, autoClear: Boolean): QueueConfig
   }
   
   type Subscription {
     newReport(report: String!): Message
     newReports: Report
-    helpme: Message
+    
+    queue(id: String!): [Waiting!]!
   }
 `;
 

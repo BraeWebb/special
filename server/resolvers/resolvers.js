@@ -5,6 +5,8 @@ const Report = require("./types/Report");
 const Case = require("./types/Case");
 const StudentCase = require("./types/StudentCase");
 
+const Queue = require("./types/Queue");
+
 const Query = require("./Query");
 const Mutation = require("./Mutation");
 const Subscription = require("./Subscription");
@@ -14,6 +16,7 @@ module.exports = lodash.merge(
   Report,
   Case,
   StudentCase,
+  Queue,
   Query,
   Mutation,
   Subscription
