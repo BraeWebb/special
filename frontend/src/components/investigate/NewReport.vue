@@ -40,6 +40,7 @@
 </template>
 
 <script>
+  import { GET_LANGUAGES } from '../../queries/languages';
   import UploadBox from '../UploadBox';
   import NewReportSteps from '../investigate/NewReportSteps';
 
@@ -55,20 +56,7 @@
     ],
     data() {
       return {
-        languages: [
-          {
-            text: 'Java',
-            value: "java",
-          },
-          {
-            text: 'Python',
-            value: "python",
-          },
-          {
-            text: 'C',
-            value: "c",
-          }
-        ],
+        languages: [],
 
         uploaded: false,
 
@@ -133,11 +121,9 @@
       this.socket.on("case", this.caseParsed);
 
       this.socket.on("generated", this.reportGenerated);
-
-      this.socket.emit("getLanguages");
-      this.socket.on("languages", (languages) => {
-        this.languages = languages;
-      });
+    },
+    apollo: {
+      languages: GET_LANGUAGES
     }
   }
 </script>

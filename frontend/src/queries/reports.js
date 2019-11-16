@@ -15,6 +15,21 @@ query {
   }
 }`;
 
+export const ALL_REPORTS_SUBSCRIPTION = gql`
+subscription {
+  newReports {
+    id
+    title
+    generator {
+      name
+    }
+    status
+    request {
+      url
+    }
+  }
+}`;
+
 export const GET_REPORT = gql`
 query getReport($id: String!) {
   report(id: $id) {
@@ -28,6 +43,15 @@ query getReport($id: String!) {
       url
     }
     cases {
+      number
+      student1 {
+        id
+        percent
+      }
+      student2 {
+        id
+        percent
+      }
       lines
     }
   }

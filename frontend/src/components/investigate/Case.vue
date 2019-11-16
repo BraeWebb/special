@@ -1,36 +1,34 @@
 <template>
-    <div class="ui two column grid segment attached left aligned">
-        <div class="ui column">
-            <div class="ui segment">
-                <h3 class="ui header">{{data.student1}}<div class="ui label">{{data.student1Percent}}%</div></h3>
-                <div v-for="(file, name) in code[0]">
-                    <div class="ui top attached tabular menu">
-                        <div class="active item">
-                            {{name}}
-                        </div>
-                    </div>
+    <div v-if="!loading" class="ui segment">
+        <h2 class="ui header">{{item.report.title}} <h3 class="ui sub header">Case {{item.number}}</h3></h2>
+
+        <a class="ui teal image label">
+            {{item.lines}}
+            <div class="detail">Lines Matched</div>
+        </a>
+        <a class="ui green image label">
+            {{item.status}}
+            <div class="detail">Status</div>
+        </a>
+        <br/>
+        <br/>
+
+        <div class="ui two column grid attached left aligned">
+            <div class="ui column">
+                <div class="ui segment">
+                    <h3 class="ui header">{{item.student1.id}}<div class="ui label">{{item.student1.percent}}%</div></h3>
                     <pre style="margin: 0px"><code class="java">
-{{file}}
-                </code></pre>
-                    <br/>
+{{item.student1.script}}
+                    </code></pre>
                 </div>
             </div>
-        </div>
-        <div class="ui column">
-            <div class="ui segment">
-                <h3 class="ui header">{{data.student2}}<div class="ui label">{{data.student2Percent}}%</div></h3>
-              <div v-for="(file, name) in code[1]">
-                  <div class="ui top attached tabular menu">
-                      <div class="active item">
-                          {{name}}
-                      </div>
-                  </div>
-                  <pre style="margin: 0px"><code class="java">
-{{file}}
-                </code></pre>
-                  <br/>
-              </div>
-
+            <div class="ui column">
+                <div class="ui segment">
+                    <h3 class="ui header">{{item.student2.id}}<div class="ui label">{{item.student2.percent}}%</div></h3>
+                      <pre style="margin: 0px"><code class="java">
+{{item.student2.script}}
+                    </code></pre>
+                </div>
             </div>
         </div>
     </div>
@@ -38,43 +36,30 @@
 
 
 <script>
+  import { GET_CASE } from "../../queries/cases";
+
   let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
   let caseId = pathParts[pathParts.length - 1];
   let reportId = pathParts[pathParts.length - 3];
 
   export default {
     name: 'Case',
-    props: ['socket'],
     mounted() {
       $('table').tablesort();
-
-      this.socket.emit("getCase", {report: reportId, case: caseId});
-      this.socket.on("case", (scripts) => {
-        this.data = scripts[0];
-        let stu1Code = "{}";
-        if (scripts[1] !== null) {
-          stu1Code = scripts[1]["content"];
-        }
-        let stu2Code = "{}";
-        if (scripts[2] !== null) {
-          stu2Code = scripts[2]["content"];
-        }
-        this.code = [JSON.parse(stu1Code), JSON.parse(stu2Code)];
-        document.querySelectorAll('pre code').forEach((block) => {
-          console.log(block);
-          hljs.highlightBlock(block);
-        });
-      });
+      // hljs.highlight();
     },
     data() {
       return {
-        data: {
-          student1: "Loading...",
-          student2: "Loading...",
-          student1Percent: "Loading...",
-          student2Percent: "Loading...",
-        },
-        code: []
+        loading: 0,
+      }
+    },
+    apollo: {
+      item: {
+        query: GET_CASE,
+        variables: {
+          number: parseInt(caseId),
+          report: reportId
+        }
       }
     }
   }

@@ -15,6 +15,8 @@ services:
       POSTGRES_DATABASE: special
     expose:
       - 5432
+    ports:
+      - 5432:5432
 
   graphql:
     container_name: graphql

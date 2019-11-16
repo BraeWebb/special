@@ -35,12 +35,27 @@
 </template>
 
 <script>
-  import { ALL_REPORTS } from "../../queries/reports";
+  import { ALL_REPORTS, ALL_REPORTS_SUBSCRIPTION } from "../../queries/reports";
 
   export default {
     name: 'Report',
     apollo: {
-      reports: ALL_REPORTS
+      reports: {
+        query: ALL_REPORTS,
+        subscribeToMore: {
+          document: ALL_REPORTS_SUBSCRIPTION,
+          updateQuery: (previous, { subscriptionData }) => {
+            const newReports = [
+              subscriptionData.data.newReports,
+              ...previous.reports
+            ];
+            return {
+              ...previous,
+              reports: newReports
+            };
+          }
+        }
+      }
     }
   }
 </script>

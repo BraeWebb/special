@@ -6,7 +6,6 @@
                 <sui-dropdown-menu>
                     <a class="ui item" href="/integrity/">List</a>
                     <a class="ui item" href="/integrity/new">New</a>
-                    <a class="ui item" href="/integrity/case/1234">Example Case</a>
                 </sui-dropdown-menu>
             </sui-dropdown>
 
@@ -14,6 +13,7 @@
                 <sui-dropdown item icon="user" simple>
                     {{me.name}}
                     <sui-dropdown-menu>
+                        <a class="ui item" href="/profile">Profile</a>
                         <a class="ui item" href="/logout">Logout</a>
                     </sui-dropdown-menu>
                 </sui-dropdown>
