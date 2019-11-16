@@ -3,6 +3,7 @@ const gql = require('graphql-tag');
 const typeDefs = gql`
   scalar Script
   scalar Time
+  scalar Message
 
   type Resource {
     group: String!
@@ -98,14 +99,20 @@ const typeDefs = gql`
     user(id: String!): User
     reports(status: ReportStatus): [Report]!
     report(id: String!): Report!
-    cases(status: CaseStatus): [Case]!
-    case(report: String!, id: Int!): Case!
+    cases(report: String!, status: CaseStatus): [Case]!
+    case(report: String!, id: Int!): Case
     languages: [Language!]!
   }
   
   type Mutation {
     requestReport(title: String!, file: String!, language: String!, maxMatches: Int, maxCases: Int): Report!
     comment(report: String!, case: Int!, content: String!, line: Int, parent: ID): Comment!
+  }
+  
+  type Subscription {
+    newReport(report: String!): Message
+    newReports: Report
+    helpme: Message
   }
 `;
 

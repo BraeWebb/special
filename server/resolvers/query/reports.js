@@ -1,6 +1,5 @@
 const { Report } = require("../../schema/model");
 
-
 function getUserReports(status, user) {
   if (status === undefined) {
     return user.getReports();

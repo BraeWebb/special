@@ -17,7 +17,21 @@ async function main() {
     playground: true,
     introspection: true,
     credentials: 'include',
-    context: async ({req}) => {
+    subscriptions: {
+      onConnect: async (connectionParams, webSocket) => {
+        return {
+          currentUser: await auth.ql(webSocket.upgradeReq).then(() => {
+            return createNewUsers(webSocket.upgradeReq.user);
+          })
+        };
+      },
+    },
+    context: async ({req, connection}) => {
+      if (connection) {
+        return {
+          currentUser: connection.context.currentUser
+        }
+      }
       try {
         return {
           currentUser: await auth.ql(req).then(() => {
@@ -33,8 +47,9 @@ async function main() {
 
   server.listen(
     {host: "0.0.0.0", port: "4000"}
-  ).then(({url}) => {
-    console.log(`🚀  Server ready at ${url}`);
+  ).then(({url, subscriptionsUrl}) => {
+    console.log(`🚀 Server ready at ${url}`);
+    console.log(`🚀 Subscriptions ready at ${subscriptionsUrl}`);
   });
 }
 

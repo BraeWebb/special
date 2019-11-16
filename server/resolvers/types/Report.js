@@ -5,7 +5,11 @@ module.exports = {
     request: report => report.getRequest(),
     generator: report => report.getUser(),
     generated: report => report.generated,
-    cases: report => report.getCases()
+    cases: report => report.getCases({
+      order: [
+        ['number']
+      ]
+    })
   },
   ReportRequest: {
     file: request => request.file,
