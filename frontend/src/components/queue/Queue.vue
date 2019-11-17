@@ -34,12 +34,11 @@
             </sui-table-header>
             <sui-table-body>
               <QueueItem
-                      v-for="waiter in waiting"
+                      v-for="waiter in config.waiting"
                       v-bind:key="waiter.id"
                       v-bind:user="waiter"
 
                       v-bind:config="config"
-                      v-bind:socket="socket"
               />
             </sui-table-body>
           </sui-table>
@@ -51,13 +50,15 @@
 
 
 <script>
-  import { GET_QUEUE } from "../../queries/queues";
+  import { GET_QUEUE, GET_QUEUE_SUBSCRIPTION } from "../../queries/queues";
+  import QueueItem from "./QueueItem";
 
   let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
   let queueId = pathParts[pathParts.length - 1];
 
   export default {
     name: 'Queue',
+    components: {QueueItem},
     data() {
       return {
         loading: 0
@@ -68,6 +69,18 @@
         query: GET_QUEUE,
         variables: {
           id: queueId
+        },
+        subscribeToMore: {
+          document: GET_QUEUE_SUBSCRIPTION,
+          variables: {
+            id: queueId
+          },
+          updateQuery: (previous, { subscriptionData }) => {
+            return {
+              ...previous,
+              page: subscriptionData.data.page
+            };
+          }
         }
       }
     }

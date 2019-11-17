@@ -22,6 +22,8 @@
 
         <QueuePageList v-if="display === 'list'"></QueuePageList>
         <Queue v-if="display === 'queue'"></Queue>
+        <QueuePageConfig v-if="display === 'page'"></QueuePageConfig>
+        <QueueConfig v-if="display === 'config'"></QueueConfig>
     </div>
 </template>
 
@@ -29,6 +31,8 @@
   import { ME } from '../queries/users';
   import QueuePageList from "../components/queue/QueueList";
   import Queue from "../components/queue/Queue";
+  import QueueConfig from "../components/queue/QueueConfig";
+  import QueuePageConfig from "../components/queue/QueuePageConfig";
 
   let display = "list";
 
@@ -40,12 +44,20 @@
   if (pathParts[pathParts.length - 2] === "queue") {
     display = "queue";
   }
+  if (pathParts[pathParts.length - 2] === "page") {
+    display = "page";
+  }
+  if (pathParts[pathParts.length - 2] === "config") {
+    display = "config";
+  }
 
   export default {
     name: 'QueuePage',
     components: {
+      QueuePageConfig,
       Queue,
-      QueuePageList
+      QueuePageList,
+      QueueConfig
     },
     data() {
       return {

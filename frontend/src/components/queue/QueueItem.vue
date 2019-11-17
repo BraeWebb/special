@@ -1,8 +1,8 @@
 <template>
     <sui-table-row>
-        <sui-table-cell>{{user.name}}</sui-table-cell>
+        <sui-table-cell>{{user.user.name}}</sui-table-cell>
         <sui-table-cell>{{user.questions_asked}}</sui-table-cell>
-        <sui-table-cell>{{user.join_time}}</sui-table-cell>
+        <sui-table-cell>{{user.joined}}</sui-table-cell>
         <sui-table-cell v-if="user.signed_on"><i class="check icon"></i></sui-table-cell>
         <sui-table-cell v-else><i class="close icon"></i></sui-table-cell>
         <sui-table-cell collapsing text-align="right">
