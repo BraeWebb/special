@@ -31,14 +31,38 @@
             </tr>
             </tbody>
         </table>
+        <div class="field">
+            <div class="ui action input fluid">
+                <input type="text" placeholder="Page Title" v-model="newQueuePageTitle"/>
+                <div class="ui button" @click="newQueue">New Page</div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-  import { ALL_QUEUE_PAGES } from "../../queries/queues";
+  import { ALL_QUEUE_PAGES, NEW_QUEUE_PAGE } from "../../queries/queues";
 
   export default {
     name: 'QueuePageList',
+    data() {
+      return {
+        newQueuePageTitle: ""
+      }
+    },
+    methods: {
+      newQueue() {
+        this.$apollo.mutate({
+          mutation: NEW_QUEUE_PAGE,
+          variables: {
+            title: this.newQueuePageTitle
+          }
+        }).then(data => {
+          this.newQueuePageTitle = "";
+          this.$apollo.queries.pages.refetch();
+        });
+      }
+    },
     apollo: {
       pages: ALL_QUEUE_PAGES
     }

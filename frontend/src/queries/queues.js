@@ -75,6 +75,14 @@ query getQueueConfig($id: String!) {
   }
 }`;
 
+export const NEW_QUEUE_PAGE = gql`
+mutation newQueuePage($title: String!) {
+  newQueuePage(title: $title) {
+    id
+  }
+}
+`;
+
 export const ADD_ADMIN = gql`
 mutation addAdmin ($user: String!, $queue: String!) {
   addAdmin (queue: $queue, user: $user)
