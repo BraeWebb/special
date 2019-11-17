@@ -30,6 +30,7 @@ StudentCase.belongsTo(Case);
 const QueuePage = require("../schema/QueuePage")(db, DataTypes);
 const QueueConfig = require("../schema/QueueConfig")(db, DataTypes);
 const Queue = require("../schema/Queue")(db, DataTypes);
+const Waiting = require("../schema/Waiting")(db, DataTypes);
 
 User.hasMany(QueuePage, {as: "QueuePages"});
 QueuePage.belongsTo(User, {as: "User"});
@@ -39,7 +40,12 @@ Queue.belongsTo(QueuePage, {as: "Page"});
 
 Queue.hasOne(QueueConfig, {as: "Config"});
 
-db.sync({force: true});
+Queue.hasMany(User, {as: "Admin", constraints: false});
+
+Queue.hasMany(Waiting, {as: "Waiting"});
+Waiting.belongsTo(User, {as: "User"});
+
+db.sync();
 
 module.exports = {
   User,
@@ -51,5 +57,6 @@ module.exports = {
 
   QueuePage,
   QueueConfig,
-  Queue
+  Queue,
+  Waiting
 };

@@ -103,6 +103,7 @@ const typeDefs = gql`
   
   type QueuePage {
     id: String!
+    title: String!
     owner: User!
     queues: [Queue!]!
   }
@@ -119,6 +120,7 @@ const typeDefs = gql`
     page: QueuePage
     config: QueueConfig!
     waiting: [Waiting!]!
+    admins: [User!]!
   }
   
   type Query {
@@ -140,16 +142,22 @@ const typeDefs = gql`
     requestReport(title: String!, file: String!, language: String!, maxMatches: Int, maxCases: Int): Report!
     comment(report: String!, case: Int!, content: String!, line: Int, parent: ID): Comment!
     
-    newQueuePage: QueuePage
+    joinQueue(id: String!): Boolean
+    leaveQueue(id: String!): Boolean
+    
+    newQueuePage(title: String!): QueuePage
     newQueue(title: String!, description: String, page: String): Queue
-    configureQueue(id: String!, signedOn: Int, questionsAsked: Int, waitTime: Int, autoClear: Boolean): QueueConfig
+    configureQueue(id: String!, title: String, description: String, signedOn: Int, questionsAsked: Int, waitTime: Int, autoClear: Boolean): Queue
+    
+    addAdmin(queue: String!, user: String!): Boolean
+    removeAdmin(queue: String!, user: String!): Boolean
   }
   
   type Subscription {
     newReport(report: String!): Message
     newReports: Report
     
-    queue(id: String!): [Waiting!]!
+    queue(page: String!): QueuePage
   }
 `;
 

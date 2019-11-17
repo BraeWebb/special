@@ -1,6 +1,7 @@
 module.exports = {
   QueuePage: {
     id: page => page.id,
+    title: page => page.title,
     owner: page => page.getUser(),
     queues: page => page.getQueues()
   },
@@ -16,6 +17,11 @@ module.exports = {
     description: queue => queue.description,
     page: queue => queue.getPage(),
     config: queue => queue.getConfig(),
-    waiting: queue => []
+    waiting: queue => queue.getWaiting(),
+    admins: queue => queue.getAdmin()
+  },
+  Waiting: {
+    joined: waiting => waiting.time,
+    user: waiting => waiting.getUser()
   }
 };
