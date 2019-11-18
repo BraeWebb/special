@@ -75,6 +75,7 @@
           extracted: false,
           sent: false,
           generated: false,
+          images: false,
           parsed: false,
           fin: false,
         },

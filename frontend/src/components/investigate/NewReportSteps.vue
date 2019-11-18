@@ -31,10 +31,16 @@
                     <div class="description">Report URL Parsed</div>
                 </div>
             </div>
+            <div class="step" v-bind:class="{completed: steps.images}">
+                <div class="content">
+                    <div class="title">Images Generated</div>
+                    <div class="description">All Images Generated</div>
+                </div>
+            </div>
             <div class="step" v-bind:class="{completed: steps.fin}">
                 <div class="content">
                     <div class="title">Cases Parsed</div>
-                    <div class="description">{{steps.cases}}/{{report.maxCases}} Cases Parsed</div>
+                    <div class="description">All Cases Parsed</div>
                 </div>
             </div>
         </div>
