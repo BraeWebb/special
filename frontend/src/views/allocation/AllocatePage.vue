@@ -33,9 +33,6 @@
             </sui-tab-pane>
             <sui-tab-pane title="Generation">
                 <sui-button class="spring-green-button" v-on:click="allocate()">Generate Allocation</sui-button>
-                <div v-if="success">
-                    <Allocation v-bind:alloc="alloc" v-bind:sessions="sessions" v-bind:download="download"/>
-                </div>
                 <sui-segments vertical>
                 <sui-segments horizontal>
                     <sui-segment>
@@ -49,6 +46,9 @@
                     <p>{{msg}}</p>
                 </sui-segment>
                 </sui-segments>
+                <div v-if="success">
+                    <Allocation v-bind:alloc="alloc" v-bind:sessions="sessions" v-bind:download="download"/>
+                </div>
             </sui-tab-pane>
         </sui-tab>
     </div>
