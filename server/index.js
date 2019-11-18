@@ -5,6 +5,8 @@ const auth = require("./util/auth");
 const resolvers = require("./resolvers/resolvers");
 const { createNewUsers } = require("./util/user");
 
+const launchConnector = require("./connector/connector");
+
 
 async function main() {
   const schema = makeExecutableSchema({
@@ -44,6 +46,8 @@ async function main() {
       }
     },
   });
+
+  launchConnector();
 
   server.listen(
     {host: "0.0.0.0", port: "4000"}
