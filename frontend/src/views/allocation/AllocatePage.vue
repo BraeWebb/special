@@ -1,22 +1,54 @@
 <template>
     <div>
         <sui-tab>
-            <sui-tab-pane title="Allocation">
-                <h1>Allocation Generation</h1>
-                <p>Tutors Recorded: {{tutors.length}}<br>Classes Recorded: {{sessions.length}}</p>
-                <sui-button class="spring-green-button" v-on:click="allocate()">Generate Allocation</sui-button>
-                <div v-if="success">
-                    <Allocation v-bind:alloc="alloc" v-bind:sessions="sessions" v-bind:download="download"/>
-                </div>
-                <p>{{msg}}</p>
+            <sui-tab-pane title="Main">
+                <h1>Welcome to the Allocation Station</h1>
+                <sui-message compact>
+                    <sui-message-header>The Path to Allocation Enlightenment</sui-message-header>
+                    <p>Use the tabs above to navigate your way<br> through the Allocation engine</p>
+                    <sui-message-list>
+                        <sui-message-item>
+                            <b>Step 1:</b> Add your class details using the <em>Classes</em> tab
+                        </sui-message-item>
+                        <sui-message-item>
+                            <b>Step 2:</b> Add your tutor details using the <em>Tutors</em> tab
+                        </sui-message-item>
+                        <sui-message-item>
+                            <b>Step 3:</b> Also on the <em>Tutors</em> tab, upload the availabilities of your tutors
+                        </sui-message-item>
+                        <sui-message-item>
+                            <b>Step 4:</b> Generate your allocation!
+                        </sui-message-item>
+                    </sui-message-list>
+                </sui-message>
+
+            </sui-tab-pane>
+            <sui-tab-pane title="Classes">
+                <ClassList v-bind:sessions="sessions"
+                           v-bind:socket="socket" v-bind:download="download"></ClassList>
             </sui-tab-pane>
             <sui-tab-pane title="Tutors">
                 <TutorList v-bind:tutors="tutors" v-bind:sessions="sessions"
                            v-bind:socket="socket" v-bind:download="download"></TutorList>
             </sui-tab-pane>
-            <sui-tab-pane title="Classes">
-                <ClassList v-bind:sessions="sessions"
-                           v-bind:socket="socket" v-bind:download="download"></ClassList>
+            <sui-tab-pane title="Generation">
+                <sui-button class="spring-green-button" v-on:click="allocate()">Generate Allocation</sui-button>
+                <sui-segments vertical>
+                <sui-segments horizontal>
+                    <sui-segment>
+                        <h4>Tutors Recorded: {{tutors.length}}</h4>
+                    </sui-segment>
+                    <sui-segment>
+                        <h4>Classes Recorded: {{sessions.length}}</h4>
+                    </sui-segment>
+                </sui-segments>
+                <sui-segment>
+                    <p>{{msg}}</p>
+                </sui-segment>
+                </sui-segments>
+                <div v-if="success">
+                    <Allocation v-bind:alloc="alloc" v-bind:sessions="sessions" v-bind:download="download"/>
+                </div>
             </sui-tab-pane>
         </sui-tab>
     </div>

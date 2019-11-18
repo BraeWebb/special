@@ -38,6 +38,34 @@
             ClassItem,
             UploadBox
         },
+        mounted() {
+            this.socket.on("classfile", (msg) => {
+                let lines = msg.trim().split("\n");
+                while (this.sessions.length > 0) {
+                    this.remove(this.sessions[0].id)
+                }
+                for (let i = 1; i < lines.length; i++) {
+                    alert(lines[i]);
+                    let line = lines[i].split(",");
+                    this.sessions.push({
+                        "id": line[0],
+                        "lower_tutor_count": parseInt(line[1]),
+                        "upper_tutor_count": parseInt(line[2]),
+                        "day": line[3],
+                        "start_time": parseInt(line[4]),
+                        "duration": parseInt(line[5])
+                    });
+                }
+                for (let i = 0; i < this.sessions.length; i++) {
+                    alert(this.sessions[i].id);
+                }
+            });
+        },
+        data() {
+            return {
+                logs: []
+            }
+        },
         methods: {
             add: function(sessionId) {
                 for (let i = 0; i < this.sessions.length; i++) {
@@ -60,17 +88,16 @@
                 }
             },
             generateCSV: function (sessions) {
-                // TODO: make this work for new data
                 let result = "ID,MIN_TUTORS,MAX_TUTORS,DAY,START_TIME,DURATION\n";
                 for (let i = 0; i < sessions.length; i++) {
                     let session = sessions[i];
                     result += [session.id, session.lower_tutor_count, session.upper_tutor_count, session.day,
-                        session.time, session.duration].join(",") + "\n";
+                        session.start_time, session.duration].join(",") + "\n";
                 }
                 this.download("classes.csv", result);
             },
             infoFileUploaded: function (fileInfo) {
-
+                this.socket.emit("classfile", fileInfo);
             }
         }
     }
