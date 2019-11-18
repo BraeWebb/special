@@ -66,7 +66,7 @@ def listen(client, subscriber, channel):
                 }))
             client.publish(pub_channel, json.dumps({"step": "parsed", "result": parsed}))
 
-            graphs.gen_report(response.url, id)
+            # graphs.gen_report(response.url, id)
             client.publish(pub_channel, json.dumps({"step": "images"}))
 
             for case_id, case in parser.parse_cases(response.url, parsed):
