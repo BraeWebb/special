@@ -1,5 +1,5 @@
 <template>
-    <div class="column">
+    <div>
         <div class="ui segment attached" style="display: flex; align-items: center">
             <div v-if="!displayUpload" style="width: 100%;">
                 <span>{{file.name}}</span>
@@ -11,26 +11,24 @@
                 <i class="large archive file outline icon"></i>
                 <span v-if="uploadState === UploadState.NOT_STARTED">{{text}}</span>
                 <span v-if="uploadState === UploadState.FILE_SELECTED">{{file.name}}</span>
-                <input class="hide" type="file" id="file" ref="file" v-on:change="handleFileUpload()"/>
+                <input class="hide" type="file" id="file" ref="file" v-on:change="handleFileUpload"/>
             </label>
         </div>
-        <button class="ui button attached"
+        <button class="ui button fluid attached"
                 v-if="displayUpload"
-                v-on:click="uploadFile()">
+                v-on:click="upload">
             Upload
         </button>
     </div>
 </template>
 
 <script>
-    import SocketIOFileClient from 'socket.io-file-client';
+    import { UPLOAD_FILE } from "../queries/files";
     import {UploadState} from '../util';
 
     export default {
       props: [
-        "socket",
-        "logs",
-          "text"
+        "text"
       ],
       data() {
         return {
@@ -47,47 +45,27 @@
         handleFileUpload() {
           this.file = this.$refs.file.files[0];
           this.uploadState = UploadState.FILE_SELECTED;
-          this.logs.push("Selected file: " + this.file.name);
         },
 
-        uploadFile() {
-          var uploader = new SocketIOFileClient(this.socket);
+        upload() {
+          this.uploadState = UploadState.UPLOADING;
+          this.displayUpload = false;
 
-          let logs = this.logs;
-          let state = this;
-
-          uploader.on('ready', function() {
-            uploader.upload([state.file]);
-          });
-
-          uploader.on('start', function(fileInfo) {
-            logs.push("Began uploading file: " + state.file.name);
-            state.uploadState = UploadState.UPLOADING;
-            state.fileInfo = fileInfo;
-            state.displayUpload = false;
-          });
-          uploader.on('stream', function(fileInfo) {
-            logs.push("Uploading file (" + fileInfo.sent + "/" + fileInfo.size + "): " + state.file.name);
-            state.progress = Math.round((fileInfo.sent / fileInfo.size) * 100);
-          });
-          uploader.on('complete', function(fileInfo) {
-            logs.push("File uploaded: " + state.file.name);
-            state.progress = 100;
-            state.uploadState = UploadState.COMPLETED;
-            state.path = fileInfo.name;
-            state.$emit('uploaded', fileInfo);
-          });
-
-          uploader.on('abort', function(fileInfo) {
-            logs.push("Aborted uploading file: " + state.file.name);
-            state.uploadState = UploadState.ABORTED;
-          });
-
-          uploader.on('error', function(error, fileInfo) {
-            logs.push("Error occurred when uploading: " + state.file.name);
-            state.uploadState = UploadState.ERROR;
-          });
-        },
+          this.$apollo
+            .mutate({
+              mutation: UPLOAD_FILE,
+              variables: {
+                file: this.file
+              },
+              context: {
+                hasUpload: true
+              }
+            }).then(data => {
+              this.uploadState = UploadState.COMPLETED;
+              this.progress = 100;
+              this.$emit('uploaded', data.data.uploadSubmissions);
+          })
+        }
       }
     }
 </script>

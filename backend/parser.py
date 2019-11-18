@@ -30,7 +30,7 @@ def parse(url):
             "case": case1,
             "student1": {
                 "id": snum1,
-                "percent": int(percent1[:-1])
+                "percent": int(percent1[:-1]),
             },
             "student2": {
                 "id": snum2,
@@ -42,28 +42,40 @@ def parse(url):
     return result
 
 
+def parse_cases(url, report):
+    for case in report:
+        yield case["id"], ((case["student1"]["id"], case["student2"]["id"]), parse_case(url, case["id"]))
+
+
 def parse_script(url):
     results = {}
     page = requests.get(url)
     parsed_html = BeautifulSoup(page.text)
-    for match in parsed_html.find("pre").text.split(">>>> file: ")[1:]:
-        name, _, content = match.partition("\n")
-        results[name] = content
-    return results
+
+    context = parsed_html.find("pre")
+
+    # TODO: work out a nice way to get blocks
+    links = parsed_html.find("pre").find_all("a")
+    for link in links:
+        match_id = link.get("name")
+        if match_id is None:
+            continue
+
+    return str(context)
 
 
 def parse_case(url, case):
-    script0 = parse_script(url + f"match{case}-0.html")
-    script1 = parse_script(url + f"match{case}-1.html")
+    script0 = parse_script(url + f"/match{case}-0.html")
+    script1 = parse_script(url + f"/match{case}-1.html")
 
     return [script0, script1]
 
 
 def main():
-    url = "http://moss.stanford.edu/results/937732643/"
-    print(parse(url))
-    # report = parse_case(url, 0)
-    # print(report)
+    url = "http://moss.stanford.edu/results/910282911/"
+    # print(parse(url))
+    report = parse_case(url, 0)
+    print(report)
 
 
 if __name__ == '__main__':

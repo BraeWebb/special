@@ -11,8 +11,8 @@
         </div>
 
         <keep-alive>
-            <NewReport v-if="currentTab === 'new'" :socket="socket" :logs.sync="logs"></NewReport>
-            <Console v-else-if="currentTab === 'log'" :logs.sync="logs"></Console>
+            <NewReport v-if="currentTab === 'new'"></NewReport>
+            <Console v-else-if="currentTab === 'log'"></Console>
         </keep-alive>
     </div>
 </template>
@@ -23,9 +23,7 @@
 
   export default {
     name: 'NewReportPage',
-    props: [
-      'socket'
-    ],
+    props: [],
     components: {
       NewReport,
       Console,
@@ -38,30 +36,8 @@
         },
         currentTab: "new",
 
-        logs: ["No logs yet... awaiting execution..."],
-
         error: null
       }
-    },
-    methods: {
-      socketDisconnect(err) {
-        this.error = err;
-        this.logs.push("Lost backend connection...");
-      },
-
-      socketReconnect(attempts) {
-        this.error = null;
-        this.logs.push("Re-established connection!");
-      },
-    },
-    mounted() {
-      this.socket.on("connect_error", this.socketDisconnect);
-
-      this.socket.on("reconnect", this.socketReconnect);
-
-      this.socket.on("log", (msg) => {
-        this.logs.push(msg);
-      });
     }
   }
 </script>

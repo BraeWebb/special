@@ -15,9 +15,9 @@
                 v-bind:key="row.id">
                 <td>{{row.id}}</td>
                 <td>{{row.title}}</td>
-                <td>{{row.userByGenerator.name}}</td>
+                <td>{{row.generator.name}}</td>
                 <td>
-                    <a :href="row.url" target="_blank">
+                    <a :href="row.request.url" target="_blank">
                         <button class="ui icon button" role="button">
                             <i class="globe right icon"></i>
                         </button>
@@ -35,21 +35,27 @@
 </template>
 
 <script>
+  import { ALL_REPORTS, ALL_REPORTS_SUBSCRIPTION } from "../../queries/reports";
+
   export default {
     name: 'Report',
-    props: [
-      "socket"
-    ],
-    data() {
-      return {
-        reports: []
+    apollo: {
+      reports: {
+        query: ALL_REPORTS,
+        subscribeToMore: {
+          document: ALL_REPORTS_SUBSCRIPTION,
+          updateQuery: (previous, { subscriptionData }) => {
+            const newReports = [
+              subscriptionData.data.newReports,
+              ...previous.reports
+            ];
+            return {
+              ...previous,
+              reports: newReports
+            };
+          }
+        }
       }
-    },
-    mounted() {
-      this.socket.emit("getReports");
-      this.socket.on("reports", (reports) => {
-        this.reports = reports;
-      });
     }
   }
 </script>

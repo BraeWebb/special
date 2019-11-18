@@ -6,38 +6,36 @@
                 <sui-dropdown-menu>
                     <a class="ui item" href="/integrity/">List</a>
                     <a class="ui item" href="/integrity/new">New</a>
-                    <a class="ui item" href="/integrity/case/1234">Example Case</a>
                 </sui-dropdown-menu>
             </sui-dropdown>
 
-            <div class="ui secondary menu right">
+            <div v-if="!loading" class="ui secondary menu right">
                 <sui-dropdown item icon="user" simple>
-                    {{user.name}}
+                    {{me.name}}
                     <sui-dropdown-menu>
+                        <a class="ui item" href="/profile">Profile</a>
                         <a class="ui item" href="/logout">Logout</a>
                     </sui-dropdown-menu>
                 </sui-dropdown>
             </div>
         </div>
 
-        <ReportList v-if="display === 'list'" :socket="socket"></ReportList>
-        <NewReportPage v-else-if="display === 'new'" :socket="socket"></NewReportPage>
-        <Report v-else-if="display === 'report'" :socket="socket"></Report>
-        <Case v-else-if="display === 'case'" :socket="socket"></Case>
+        <ReportList v-if="display === 'list'"></ReportList>
+        <NewReportPage v-else-if="display === 'new'"></NewReportPage>
+        <GraphList v-else-if="display === 'graphs'"></GraphList>
+        <Report v-else-if="display === 'report'"></Report>
+        <Case v-else-if="display === 'case'"></Case>
     </div>
 </template>
 
 <script>
-  import io from 'socket.io-client';
-
   import ReportList from '../components/investigate/ReportList';
   import Report from '../components/investigate/Report';
   import Case from '../components/investigate/Case';
   import NewReportPage from "./NewReportPage";
 
-  let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
-  let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
-  let socket = io(host + ":" + port);
+  import { ME } from '../queries/users';
+  import GraphList from "../components/investigate/GraphList";
 
   let display = "list";
 
@@ -52,10 +50,14 @@
   if (pathParts[pathParts.length - 2] === "case") {
     display = "case";
   }
+  if (pathParts[pathParts.length - 1] === "graphs") {
+    display = "graphs";
+  }
 
   export default {
     name: 'InvestigatePage',
     components: {
+      GraphList,
       NewReportPage,
       ReportList,
       Report,
@@ -64,17 +66,11 @@
     data() {
       return {
         display: display,
-        socket: socket,
-        user: {
-          name: "Loading"
-        }
+        loading: 0
       }
     },
-    mounted() {
-      this.socket.emit("getUser");
-      this.socket.on("user", (user) => {
-        this.user = user;
-      });
+    apollo: {
+      me: ME
     }
   }
 </script>

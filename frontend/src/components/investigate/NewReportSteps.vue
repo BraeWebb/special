@@ -1,12 +1,6 @@
 <template>
     <div v-if="steps.started">
         <div class="ui ordered vertical steps">
-            <div class="step" v-bind:class="{completed: steps.queued}">
-                <div class="content">
-                    <div class="title">Job Queued</div>
-                    <div class="description">Waiting for processor to accept</div>
-                </div>
-            </div>
             <div class="step" v-bind:class="{completed: steps.accepted}">
                 <div class="content">
                     <div class="title">Job Started</div>
@@ -33,8 +27,20 @@
             </div>
             <div class="step" v-bind:class="{completed: steps.parsed}">
                 <div class="content">
-                    <div class="title">Report Parsed</div>
+                    <div class="title">Report Indexed</div>
                     <div class="description">Report URL Parsed</div>
+                </div>
+            </div>
+            <div class="step" v-bind:class="{completed: steps.images}">
+                <div class="content">
+                    <div class="title">Images Generated</div>
+                    <div class="description">All Images Generated</div>
+                </div>
+            </div>
+            <div class="step" v-bind:class="{completed: steps.fin}">
+                <div class="content">
+                    <div class="title">Cases Parsed</div>
+                    <div class="description">All Cases Parsed</div>
                 </div>
             </div>
         </div>
@@ -53,6 +59,6 @@
 
 <script>
     export default {
-      props: ["steps", "result"]
+      props: ["steps", "result", "report"]
     }
 </script>

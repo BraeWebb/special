@@ -1,6 +1,6 @@
 <template>
     <div class="ui fluid attached container segment">
-        <NewReportSteps v-if="steps.started" :steps.sync="steps" :result.sync="result"></NewReportSteps>
+        <NewReportSteps v-if="steps.started" :report="report" :steps.sync="steps" :result.sync="result"></NewReportSteps>
         <div v-else class="ui stackable two column grid">
             <div class="stretched row">
                 <div class="column">
@@ -18,17 +18,19 @@
                     />
                     <br/>
                     <div class="ui left icon fluid input">
-                        <input type="number" placeholder="Max Matches" v-model="report.maxMatches">
+                        <input type="number" placeholder="Max Matches (default: 10)" v-model="report.maxMatches">
                         <i class="icon bullseye"></i>
                     </div>
                     <br/>
                     <div class="ui left icon fluid input">
-                        <input type="number" placeholder="Max Cases" v-model="report.maxCases">
+                        <input type="number" placeholder="Max Cases (default: 200)" v-model="report.maxCases">
                         <i class="icon thermometer full"></i>
                     </div>
                 </div>
-                <UploadBox :socket="socket" :logs.sync="logs"
-                           :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
+                <div class="column">
+                    <UploadBox :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
+                    <UploadBox :text="'Upload base files'" @uploaded="baseFilesUploaded"></UploadBox>
+                </div>
             </div>
             <sui-button class="ui fluid primary button attached"
                         :disabled="!(uploaded && report.language != null)"
@@ -40,6 +42,8 @@
 </template>
 
 <script>
+  import { GET_LANGUAGES } from '../../queries/languages';
+  import { GENERATE_REPORT, STEP_SUBSCRIPTION } from '../../queries/reports';
   import UploadBox from '../UploadBox';
   import NewReportSteps from '../investigate/NewReportSteps';
 
@@ -49,45 +53,31 @@
       UploadBox,
       NewReportSteps
     },
-    props: [
-      'socket',
-      'logs'
-    ],
     data() {
       return {
-        languages: [
-          {
-            text: 'Java',
-            value: "java",
-          },
-          {
-            text: 'Python',
-            value: "python",
-          },
-          {
-            text: 'C',
-            value: "c",
-          }
-        ],
+        languages: [],
 
         uploaded: false,
 
         report: {
           language: null,
-          maxMatches: 10,
-          maxCases: 250,
+          maxMatches: null,
+          maxCases: null,
           title: "Untitled",
-          reportPath: null
+          file: null,
+          base: null
         },
 
         steps: {
+          cases: 0,
           started: false,
-          queued: false,
           accepted: false,
           extracted: false,
           sent: false,
           generated: false,
+          images: false,
           parsed: false,
+          fin: false,
         },
         result: null
       }
@@ -95,40 +85,55 @@
     methods: {
       fileUploaded(fileInfo) {
         this.uploaded = true;
-        this.report.reportPath = fileInfo.name;
+        this.report.file = fileInfo.filename;
+      },
+
+      baseFilesUploaded(fileInfo) {
+        this.report.base = fileInfo.filename;
       },
 
       submitReport() {
         this.steps.started = true;
-        this.logs.push("Report submitted: " + this.report.toString());
-        this.socket.emit("generate", {report: this.report})
+        this.$apollo.mutate({
+          mutation: GENERATE_REPORT,
+          variables: this.report
+        }).then(data => {
+          this.subToSteps(data.data.requestReport);
+        });
       },
 
-      reportGenerated(data) {
-        this.result = data;
+      subToSteps(data) {
+        const observer = this.$apollo.subscribe({
+          query: STEP_SUBSCRIPTION,
+          variables: {
+            id: data.id
+          }
+        });
+
+        let state = this;
+
+        observer.subscribe({
+          next (data) {
+            data = data.data.steps;
+
+            if (data.step === "generated") {
+              state.result = data.url
+            }
+
+            state.steps[data.step] = true
+          },
+          error (error) {
+            console.error(error)
+          },
+        })
       },
 
-      updateStep(step) {
-        return (data) => {
-          this.logs.push("Report " + step + ".");
-          this.steps[step] = true;
-        };
+      caseParsed(data) {
+        this.steps.cases += 1;
       }
     },
-    mounted() {
-      this.socket.on("queued", this.updateStep("queued"));
-      this.socket.on("accepted", this.updateStep("accepted"));
-      this.socket.on("extracted", this.updateStep("extracted"));
-      this.socket.on("sent", this.updateStep("sent"));
-      this.socket.on("generated", this.updateStep("generated"));
-      this.socket.on("parsed", this.updateStep("parsed"));
-
-      this.socket.on("generated", this.reportGenerated);
-
-      this.socket.emit("getLanguages");
-      this.socket.on("languages", (languages) => {
-        this.languages = languages;
-      });
+    apollo: {
+      languages: GET_LANGUAGES,
     }
   }
 </script>

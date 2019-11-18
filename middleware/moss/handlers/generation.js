@@ -108,6 +108,32 @@ function logCase(reportId, data) {
   );
 }
 
+const newScriptMutation = `
+mutation newScript($sid: String!, $report: String!,
+  $content: String!) {
+  createScript(input: {
+    script: {
+      student: $sid
+      report: $report
+      content: $content
+    }
+  }) {
+    script {
+      nodeId
+    }
+  }
+}
+`;
+function logScript(reportId, sid, content) {
+  client.request(newScriptMutation,
+    {
+      "report": reportId,
+      "sid": sid,
+      "content": JSON.stringify(content)
+    }
+  );
+}
+
 
 function generateReport(io, socket) {
   return (data) => {
@@ -195,6 +221,19 @@ function bind(io) {
           logCase(message["reportId"], message["cases"][i]);
         }
         connection.emit('parsed', message["reportId"]);
+      }
+
+      if (channel === "report:case") {
+        let reportId = message['reportId'];
+        let scripts = message['case'];
+        console.log(scripts[0]);
+        logScript(reportId, scripts[0][0], scripts[1][0]);
+        logScript(reportId, scripts[0][1], scripts[1][1]);
+        connection.emit('case', message['case']);
+      }
+
+      if (channel === "report:fin") {
+        connection.emit('fin');
       }
     });
 

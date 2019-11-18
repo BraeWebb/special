@@ -3,6 +3,14 @@ import re
 import zipfile
 
 
+IGNORE_PATHS = [
+    "__pycache__",
+    "venv",
+    ".git",
+    "__MACOSX"
+]
+
+
 def extract(path, ext, out="out"):
     """
     Extract all the files within a zip at the path location
@@ -18,8 +26,9 @@ def extract(path, ext, out="out"):
         files = zip.namelist()
         for file in files:
             # get the student number
-            print(file)
             matches = re.search("(s[0-9]{6,7})", file)
+            if matches is None:
+                continue
             student = matches.group(0)
             if not file.endswith(ext):
                 continue
@@ -27,6 +36,35 @@ def extract(path, ext, out="out"):
             # copy the file out under the student number
             os.makedirs(os.path.join(out, student), exist_ok=True)
             target = os.path.join(out, student, os.path.basename(file))
+            with open(target, "w") as f:
+                f.write(zip.read(file).decode())
+
+
+def unpack(path, ext, out="out"):
+    """
+    Extract all the files within a zip at the path location
+    with the ext extension.
+
+    Parameters:
+        path (str): The path to a zip archive.
+        ext (str): Extension of the files to pull from the zip.
+        out (str): Output directory to extract to, default is 'out'
+    """
+    with zipfile.ZipFile(path, 'r') as zip:
+        # get the files within a zip
+        files = zip.namelist()
+        for file in files:
+            if not file.endswith(ext):
+                continue
+
+            matches = re.search("(__pycache__|venv|\.git|__MACOSX)", file)
+            if matches is not None:
+                continue
+
+            print(file)
+            # copy file out
+            os.makedirs(out, exist_ok=True)
+            target = os.path.join(out, os.path.basename(file))
             with open(target, "w") as f:
                 f.write(zip.read(file).decode())
 

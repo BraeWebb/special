@@ -1,18 +1,26 @@
 <template>
-    <div class="ui segment">
+    <div v-if="!loading" class="ui segment">
         <h2 class="ui header">{{report.title}}</h2>
         <a class="ui teal image label">
-            {{report.userByGenerator.name}}
+            {{report.generator.name}}
             <div class="detail">Generator</div>
         </a>
-        <a class="ui green image label">
-            {{report.url}}
+        <a class="ui green image label" :href="report.request.url" target="_blank">
+            {{report.request.url}}
             <div class="detail">URL</div>
         </a>
         <a class="ui blue image label">
             {{reportId}}
             <div class="detail">ID</div>
         </a>
+        <a class="ui yellow image label">
+            {{report.status}}
+            <div class="detail">Status</div>
+        </a>
+        <!--<a class="ui yellow image label" :href="'/integrity/report/' + reportId + '/graphs'">-->
+            <!--<i class="image icon"></i>-->
+            <!--<div class="detail">Graphs</div>-->
+        <!--</a>-->
 
         <table class="ui sortable celled table left aligned" id="user-table">
             <thead>
@@ -28,21 +36,23 @@
             </thead>
             <tbody>
 
-            <tr v-for="row in report.casesByReport.nodes"
-                v-bind:key="row.id">
-                <td>{{row.id}}</td>
-                <td class="center aligned">{{row.student1}}</td>
-                <td :data-sort-value="row.student1Percent" class="center aligned">{{row.student1Percent}}%</td>
-                <td class="center aligned">{{row.student2}}</td>
-                <td :data-sort-value="row.student2Percent" class="center aligned">{{row.student2Percent}}%</td>
+            <tr v-for="row in report.cases"
+                v-bind:key="row.number">
+                <template v-if="row.student1 !== null && row.student2 !== null">
+                <td>{{row.number}}</td>
+                <td class="center aligned">{{row.student1.id}}</td>
+                <td :data-sort-value="row.student1.percent" class="center aligned">{{row.student1.percent}}%</td>
+                <td class="center aligned">{{row.student2.id}}</td>
+                <td :data-sort-value="row.student2.percent" class="center aligned">{{row.student2.percent}}%</td>
                 <td :data-sort-value="row.lines" class="center aligned">{{row.lines}}</td>
                 <td>
-                    <a :href="report.url + '/match' + row.id + '.html'">
+                    <a :href="'/integrity/report/' + reportId + '/case/' + row.number">
                         <button class="ui icon button" role="button">
                             <i class="angle right icon"></i>
                         </button>
                     </a>
                 </td>
+                </template>
             </tr>
             </tbody>
         </table>
@@ -51,34 +61,29 @@
 
 
 <script>
-    let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
+  import { GET_REPORT } from "../../queries/reports";
+
+  let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
     let reportId = pathParts[pathParts.length - 1];
 
     export default {
     name: 'Report',
-    props: [
-      'socket'
-    ],
     data() {
       return {
         reportId: reportId,
-        report: {
-          title: "Loading...",
-          generator: "",
-          url: "",
-          casesByReport: {
-            nodes: []
-          }
-        },
+        loading: 0
       }
     },
     mounted() {
       $('table').tablesort();
-
-      this.socket.emit("getReport", {id: reportId});
-      this.socket.on("report", (report) => {
-        this.report = report;
-      });
+    },
+    apollo: {
+      report: {
+        query: GET_REPORT,
+        variables: {
+          id: reportId
+        }
+      }
     }
   }
 </script>

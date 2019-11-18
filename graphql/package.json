@@ -1,0 +1,16 @@
+{
+  "name": "uq-graphql",
+  "version": "1.0.0",
+  "description": "A uqcloud authentication based GraphQL server",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Brae Webb",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.9.7",
+    "graphql": "^14.5.8",
+    "uqsso": "^1.0.0"
+  }
+}

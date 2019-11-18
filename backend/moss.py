@@ -99,6 +99,12 @@ class Report:
                 logger(f"ERROR: Unsupported language: {request.language}")
                 raise UnsupportedLanguageException(f"Unsupported language: {request.language}")
 
+            # Upload base files
+            for file, data in request.base_files:
+                logger(f"Uploading base file {file}...")
+                report._upload_file(connection, 0, file, data)
+
+            # Upload submitted files
             file_id = 1
             for file, submission in request.submissions:
                 logger(f"Uploading file {file}...")

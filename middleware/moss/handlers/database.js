@@ -63,6 +63,28 @@ query getReport($id: String!){
   }
 }
 `;
+const getCaseQuery = `
+query getCase($report: String!, $case: Int!){
+  caseByIdAndReport(id: $case, report: $report) {
+    student1,
+    student2,
+    student1Percent,
+    student2Percent,
+  }
+}`;
+const getScriptQuery = `
+query getScript($student: String!, $report: String!){
+  reportById(id: $report) {
+    scriptsByReport(condition: {
+      student: $student
+    }) {
+      nodes {
+        content
+      }
+    }
+  }
+}
+`;
 const getUserQuery = `
 query getUser($id: String!) {
   userById(id: $id) {
@@ -77,9 +99,7 @@ mutation addUser($id: String!, $name: String!) {
   createUser (input: {
     user: {
       id: $id,
-      name: $name,
-      questionsToday: 0,
-      questionsAllTime: 0
+      name: $name
     }
   }) {
     clientMutationId
@@ -145,6 +165,23 @@ function bind(io) {
       client.request(getUserQuery, {id: user}).then((data) => {
         connection.emit('user', data["userById"]);
       });
+    });
+
+    relay("case", io, socket, (connection, data) => {
+      let request = data;
+      client.request(getCaseQuery, {report: request['report'], case: parseInt(request['case'])})
+        .then((data) => {
+          let students = data["caseByIdAndReport"];
+          client.request(getScriptQuery, {report: request['report'], student: students['student1']})
+            .then((data) => {
+              let student1 = data["reportById"]["scriptsByReport"]["nodes"][0];
+              client.request(getScriptQuery, {report: request['report'], student: students['student2']})
+                .then((data) => {
+                  let student2 = data["reportById"]["scriptsByReport"]["nodes"][0];
+                  connection.emit('case', [students, student1, student2]);
+                });
+            });
+        });
     });
   });
 }
