@@ -38,8 +38,8 @@
                 <sui-grid-column v-bind:style="'width: 50%'">
                     <sui-button class="spring-green-button" v-on:click="generateAllocCSV(tutors, sessions)"
                                 v-bind:style="'width: 100%'">Download Availability CSV</sui-button><br>
-                    <!--<UploadBox :socket="socket" :logs.sync="logs" @uploaded="availFileUploaded"
-                               :text="'Upload Availability File'" v-bind:style="'padding-top: 10px;'"></UploadBox>-->
+                    <UploadBox :socket="socket" :logs.sync="logs" @uploaded="availFileUploaded"
+                               :text="'Upload Availability File'" v-bind:style="'padding-top: 10px;'"></UploadBox>
                 </sui-grid-column>
             </sui-grid-row>
         </sui-grid>
@@ -61,9 +61,11 @@
         mounted() {
             this.socket.on("tutorfile", (msg) => {
                 let lines = msg.trim().split("\n");
-                this.tutors = [];
+                while (this.tutors.length > 0) {
+                    this.tutors.pop();
+                }
                 for (let i = 1; i < lines.length; i++) {
-                    let line = lines[i].split(",");
+                    let line = lines[i].trim().split(",");
                     this.tutors.push({
                         "name": line[0],
                         "lower_hr_limit": parseInt(line[1]),
@@ -75,8 +77,33 @@
                         },
                         "is_junior": line[6] === "TRUE",
                         "daily_max": parseInt(line[7]),
-                        "pref_contig": line[8] === "TRUE"
+                        "pref_contig": line[8] === "TRUE",
+                        "availability": []
                     });
+                }
+            });
+
+            this.socket.on("availabilityfile", (msg) => {
+                let lines = msg.trim().split("\n");
+                let tutors = lines[0].trim().split(",");
+                let grid = {};
+                for (let i = 1; i < tutors.length; i++) {
+                    grid[tutors[i]] = [];
+                }
+                for (let i = 1; i < lines.length; i++) {
+                    let line = lines[i].trim().split(",");
+                    let sessionId = line[0];
+                    for (let j = 1; j < line.length; j++) {
+                        if (line[j] === "A") {
+                            grid[tutors[j]].push(sessionId);
+                        }
+                    }
+                }
+
+                for (let tutor in grid) {
+                    if (grid.hasOwnProperty(tutor)) {
+                        this.addAvail(tutor, grid[tutor]);
+                    }
                 }
             });
         },
@@ -87,7 +114,6 @@
         },
         methods: {
             add: function(name) {
-                alert(this.logs);
                 for (let i = 0; i < this.tutors.length; i++) {
                     if (name === this.tutors[i].name) {
                         this.tutors.splice(i + 1, 0, {
@@ -97,7 +123,8 @@
                             "lower_type_limits": {"T": 0, "P": 0, "U": 0},
                             "is_junior": false,
                             "daily_max": 12,
-                            "pref_contig": true
+                            "pref_contig": true,
+                            "availability": []
                         });
                         break;
                     }
@@ -108,6 +135,19 @@
                 for (let i = 0; i < this.tutors.length; i++) {
                     if (name === this.tutors[i].name) {
                         this.tutors.splice(index, 1);
+                    }
+                }
+            },
+            addAvail: function(tutor, sessions) {
+                for (let i = 0; i < this.tutors.length; i++) {
+                    if (this.tutors[i].name === tutor) {
+                        while (this.tutors[i].availability.length > 0) {
+                            this.tutors[i].availability.pop();
+                        }
+                        for (let j = 0; j < sessions.length; j++) {
+                            this.tutors[i].availability.push(sessions[j]);
+                        }
+                        alert(tutor + " " + this.tutors[i].availability.join(","));
                     }
                 }
             },
@@ -127,15 +167,18 @@
                 for (let i = 0; i < tutors.length; i++) {
                     result += "," + tutors[i].name;
                 }
+                result += "\n";
                 for (let i = 0; i < sessions.length; i++) {
                     result += sessions[i].id;
-                    for (let j = 0; j < tutors.length; i++) {
+                    alert(result);
+                    for (let j = 0; j < tutors.length; j++) {
                         if (tutors[j].availability.includes(sessions[i].id)) {
                             result += ",A";
                         } else {
                             result += ",U";
                         }
                     }
+                    result += "\n";
                 }
                 this.download("allocation.csv", result);
             },
@@ -143,7 +186,7 @@
                 this.socket.emit("tutorfile", fileInfo);
             },
             availFileUploaded: function(fileInfo) {
-
+                this.socket.emit("availabilityfile", fileInfo);
             }
         }
     }

@@ -41,10 +41,13 @@
         mounted() {
             this.socket.on("classfile", (msg) => {
                 let lines = msg.trim().split("\n");
-                let sessions = [];
+                while (this.sessions.length > 0) {
+                    this.remove(this.sessions[0].id)
+                }
                 for (let i = 1; i < lines.length; i++) {
+                    alert(lines[i]);
                     let line = lines[i].split(",");
-                    sessions.push({
+                    this.sessions.push({
                         "id": line[0],
                         "lower_tutor_count": parseInt(line[1]),
                         "upper_tutor_count": parseInt(line[2]),
@@ -53,7 +56,9 @@
                         "duration": parseInt(line[5])
                     });
                 }
-                this.sessions = sessions;
+                for (let i = 0; i < this.sessions.length; i++) {
+                    alert(this.sessions[i].id);
+                }
             });
         },
         data() {
