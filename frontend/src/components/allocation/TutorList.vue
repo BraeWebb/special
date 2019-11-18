@@ -50,7 +50,6 @@
     import TutorItem from './TutorItem.vue'
     import UploadBox from '../UploadBox.vue'
 
-
     export default {
         name: "TutorList",
         props: ["tutors", "sessions", "socket", "download"],
