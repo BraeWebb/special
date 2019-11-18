@@ -12,6 +12,7 @@ async function createQueuePage(args, user) {
     title: args.title
   });
 
+  await user.addQueuePage(page);
   await page.setUser(user);
 
   return page;
