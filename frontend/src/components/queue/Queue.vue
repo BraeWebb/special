@@ -14,10 +14,10 @@
           </sui-card-header>
         </sui-card-content>
 
-        <sui-button positive attached="bottom" class="spring-green-button">
+        <sui-button positive attached="bottom" class="spring-green-button" @click="joinQueue(config.id)">
           <sui-icon name="add" /> Join
         </sui-button>
-        <sui-button attached="bottom" color="red">
+        <sui-button attached="bottom" color="red" @click="leaveQueue(config.id)">
           <sui-icon name="minus" /> Leave
         </sui-button>
 
@@ -50,7 +50,7 @@
 
 
 <script>
-  import { GET_QUEUE, GET_QUEUE_SUBSCRIPTION } from "../../queries/queues";
+  import { GET_QUEUE, GET_QUEUE_SUBSCRIPTION, JOIN_QUEUE, LEAVE_QUEUE } from "../../queries/queues";
   import QueueItem from "./QueueItem";
 
   let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
@@ -62,6 +62,24 @@
     data() {
       return {
         loading: 0
+      }
+    },
+    methods: {
+      joinQueue(queue) {
+        this.$apollo.mutate({
+          mutation: JOIN_QUEUE,
+          variables: {
+            id: queue
+          }
+        })
+      },
+      leaveQueue(queue) {
+        this.$apollo.mutate({
+          mutation: LEAVE_QUEUE,
+          variables: {
+            id: queue
+          }
+        })
       }
     },
     apollo: {

@@ -2,7 +2,9 @@ const { User } = require("../schema/model");
 
 function createNewUsers(user) {
   return User.findOne({
-    where: {id: user.user}
+    where: {
+      id: user.user
+    }
   }).then(dbUser => {
 
     if (dbUser === null) {

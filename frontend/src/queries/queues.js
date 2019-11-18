@@ -16,6 +16,7 @@ query getQueue($id: String!) {
   page: queuePage(id: $id) {
     title
     queues {
+      id
       title
       description
       waiting {
@@ -33,6 +34,7 @@ subscription subQueue($id: String!) {
   page: queue(page: $id) {
     title
     queues {
+      id
       title
       description
       waiting {
@@ -83,6 +85,14 @@ mutation newQueuePage($title: String!) {
 }
 `;
 
+export const NEW_QUEUE = gql`
+mutation newQueue($page: String!, $title: String!) {
+  newQueue(title: $title, description: "", page: $page) {
+    id
+  }
+}
+`;
+
 export const ADD_ADMIN = gql`
 mutation addAdmin ($user: String!, $queue: String!) {
   addAdmin (queue: $queue, user: $user)
@@ -103,3 +113,15 @@ mutation configureQueue($id: String!, $title: String, $description: String, $sig
 }
 `;
 
+
+export const JOIN_QUEUE = gql`
+mutation joinQueue($id: String!){
+  joinQueue(id: $id)
+}
+`;
+
+export const LEAVE_QUEUE = gql`
+mutation leaveQueue($id: String!){
+  leaveQueue(id: $id)
+}
+`;

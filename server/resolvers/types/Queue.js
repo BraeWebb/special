@@ -3,7 +3,7 @@ module.exports = {
     id: page => page.id,
     title: page => page.title,
     owner: page => page.getUser(),
-    queues: page => page.getQueues()
+    queues: page => page.getQueues({order: ['createdAt']})
   },
   QueueConfig: {
     signedOn: request => request.signedOn,

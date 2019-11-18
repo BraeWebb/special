@@ -3,7 +3,10 @@
         <div class="ui form">
             <h3>Title</h3>
             <div class="field">
-                <input type="text" autocomplete="off" :value="page.title">
+                <div class="ui action input fluid">
+                    <input type="text" autocomplete="off" :value="page.title">
+                    <div class="ui button" @click="updateTitle">Save</div>
+                </div>
             </div>
         </div>
         <table class="ui sortable celled table left aligned" id="user-table">
@@ -30,11 +33,17 @@
             </tr>
             </tbody>
         </table>
+        <div class="field">
+            <div class="ui action input fluid">
+                <input type="text" placeholder="Queue Title" v-model="newQueueTitle"/>
+                <div class="ui button" @click="newQueue">Add Queue</div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
-  import { GET_QUEUE_PAGE_CONFIG } from '../../queries/queues';
+  import { GET_QUEUE_PAGE_CONFIG, NEW_QUEUE } from '../../queries/queues';
 
   let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});
   let queueId = pathParts[pathParts.length - 1];
@@ -43,7 +52,25 @@
     name: "QueuePageConfig",
     data() {
       return {
+        newQueueTitle: "",
         loading: 0
+      }
+    },
+    methods: {
+      updateTitle() {
+
+      },
+      newQueue() {
+        this.$apollo.mutate({
+          mutation: NEW_QUEUE,
+          variables: {
+            page: queueId,
+            title: this.newQueueTitle
+          }
+        }).then(data => {
+          this.$apollo.queries.page.refetch();
+          this.newQueueTitle = "";
+        })
       }
     },
     apollo: {
