@@ -17,6 +17,10 @@
             {{report.status}}
             <div class="detail">Status</div>
         </a>
+        <a class="ui yellow image label" :href="'/integrity/report/' + reportId + '/graphs'">
+            <i class="image icon"></i>
+            <div class="detail">Graphs</div>
+        </a>
 
         <table class="ui sortable celled table left aligned" id="user-table">
             <thead>

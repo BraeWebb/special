@@ -22,6 +22,7 @@
 
         <ReportList v-if="display === 'list'"></ReportList>
         <NewReportPage v-else-if="display === 'new'"></NewReportPage>
+        <GraphList v-else-if="display === 'graphs'"></GraphList>
         <Report v-else-if="display === 'report'"></Report>
         <Case v-else-if="display === 'case'"></Case>
     </div>
@@ -34,6 +35,7 @@
   import NewReportPage from "./NewReportPage";
 
   import { ME } from '../queries/users';
+  import GraphList from "../components/investigate/GraphList";
 
   let display = "list";
 
@@ -48,10 +50,14 @@
   if (pathParts[pathParts.length - 2] === "case") {
     display = "case";
   }
+  if (pathParts[pathParts.length - 1] === "graphs") {
+    display = "graphs";
+  }
 
   export default {
     name: 'InvestigatePage',
     components: {
+      GraphList,
       NewReportPage,
       ReportList,
       Report,

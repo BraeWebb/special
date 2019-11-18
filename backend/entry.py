@@ -5,6 +5,7 @@ import redis
 import moss
 import submissions
 import parser
+import graphs
 
 
 # TODO: Read extensions from the database
@@ -49,9 +50,8 @@ def listen(client, subscriber, channel):
 
             parsed = parser.parse(response.url)
             client.publish(pub_channel, json.dumps({"step": "parsed", "result": parsed}))
-                           json.dumps({"user": data['user'],
-                                       "cases": parsed,
-                                       "reportId": data["id"]}))
+
+            graphs.gen_report(response.url, id)
 
             for case_id, case in parser.parse_cases(response.url, parsed):
                 client.publish("report:case",
