@@ -18,11 +18,12 @@ const graphqlPort = process.env.VUE_APP_GRAPHQL_PORT || "";
 const graphql = window.location.hostname + ":" + graphqlPort + "/graphql";
 
 const httpLink = new createUploadLink({
-  uri: 'http://' + graphql
+  uri: window.location.protocol + '//' + graphql
 });
 
+const webSocketProtocol = window.location.protocol === "http:" ? "ws:" : "wss:";
 const wsLink = new WebSocketLink({
-  uri: 'ws://' + graphql,
+  uri: webSocketProtocol + '//' + graphql,
   options: {
     reconnect: true,
   },

@@ -18,12 +18,12 @@
                     />
                     <br/>
                     <div class="ui left icon fluid input">
-                        <input type="number" placeholder="Max Matches" v-model="report.maxMatches">
+                        <input type="number" placeholder="Max Matches (default: 10)" v-model="report.maxMatches">
                         <i class="icon bullseye"></i>
                     </div>
                     <br/>
                     <div class="ui left icon fluid input">
-                        <input type="number" placeholder="Max Cases" v-model="report.maxCases">
+                        <input type="number" placeholder="Max Cases (default: 200)" v-model="report.maxCases">
                         <i class="icon thermometer full"></i>
                     </div>
                 </div>
@@ -58,8 +58,8 @@
 
         report: {
           language: null,
-          maxMatches: 10,
-          maxCases: 250,
+          maxMatches: null,
+          maxCases: null,
           title: "Untitled",
           file: null
         },

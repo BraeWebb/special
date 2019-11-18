@@ -83,8 +83,8 @@ def generate_report(data, logger, callback=None):
                                  submissions=get_files(os.path.join("data", data["id"])),
                                  directory_mode=True,
                                  language=request['language'],
-                                 max_matches=request['maxMatches'],
-                                 max_cases=request['maxCases'],
+                                 max_matches=request['maxMatches'] or 10,
+                                 max_cases=request['maxCases'] or 200,
                                  comment=report['title'])
     report = moss.Report.make_request(request, logger=logger, sent_callback=callback)
 
