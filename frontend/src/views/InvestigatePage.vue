@@ -20,26 +20,20 @@
             </div>
         </div>
 
-        <ReportList v-if="display === 'list'" :socket="socket"></ReportList>
-        <NewReportPage v-else-if="display === 'new'" :socket="socket"></NewReportPage>
-        <Report v-else-if="display === 'report'" :socket="socket"></Report>
-        <Case v-else-if="display === 'case'" :socket="socket"></Case>
+        <ReportList v-if="display === 'list'"></ReportList>
+        <NewReportPage v-else-if="display === 'new'"></NewReportPage>
+        <Report v-else-if="display === 'report'"></Report>
+        <Case v-else-if="display === 'case'"></Case>
     </div>
 </template>
 
 <script>
-  import io from 'socket.io-client';
-
   import ReportList from '../components/investigate/ReportList';
   import Report from '../components/investigate/Report';
   import Case from '../components/investigate/Case';
   import NewReportPage from "./NewReportPage";
 
   import { ME } from '../queries/users';
-
-  let host = process.env.VUE_APP_MOSS_HOST ? process.env.VUE_APP_MOSS_HOST : "localhost";
-  let port = process.env.VUE_APP_MOSS_PORT ? process.env.VUE_APP_MOSS_PORT : "3050";
-  let socket = io(host + ":" + port);
 
   let display = "list";
 
@@ -66,7 +60,6 @@
     data() {
       return {
         display: display,
-        socket: socket,
         loading: 0
       }
     },

@@ -76,7 +76,7 @@ async function join(args, user) {
     queue: page,
     action: "JOIN",
     user: user
-  }).then((value => console.log(value)));
+  });
 
   return true;
 }

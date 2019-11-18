@@ -27,8 +27,7 @@
                         <i class="icon thermometer full"></i>
                     </div>
                 </div>
-                <UploadBox :socket="socket" :logs.sync="logs"
-                           :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
+                <UploadBox :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
             </div>
             <sui-button class="ui fluid primary button attached"
                         :disabled="!(uploaded && report.language != null)"
@@ -41,6 +40,7 @@
 
 <script>
   import { GET_LANGUAGES } from '../../queries/languages';
+  import { GENERATE_REPORT } from '../../queries/reports';
   import UploadBox from '../UploadBox';
   import NewReportSteps from '../investigate/NewReportSteps';
 
@@ -50,10 +50,6 @@
       UploadBox,
       NewReportSteps
     },
-    props: [
-      'socket',
-      'logs'
-    ],
     data() {
       return {
         languages: [],
@@ -65,7 +61,7 @@
           maxMatches: 10,
           maxCases: 250,
           title: "Untitled",
-          reportPath: null
+          file: null
         },
 
         steps: {
@@ -85,13 +81,18 @@
     methods: {
       fileUploaded(fileInfo) {
         this.uploaded = true;
-        this.report.reportPath = fileInfo.name;
+        console.log(fileInfo);
+        this.report.file = fileInfo.filename;
       },
 
       submitReport() {
         this.steps.started = true;
-        this.logs.push("Report submitted: " + this.report.toString());
-        this.socket.emit("generate", {report: this.report})
+        this.$apollo.mutate({
+          mutation: GENERATE_REPORT,
+          variables: this.report
+        }).then(data => {
+          console.log(data);
+        });
       },
 
       reportGenerated(data) {
@@ -104,23 +105,9 @@
 
       updateStep(step) {
         return (data) => {
-          this.logs.push("Report " + step + ".");
           this.steps[step] = true;
         };
       }
-    },
-    mounted() {
-      this.socket.on("queued", this.updateStep("queued"));
-      this.socket.on("accepted", this.updateStep("accepted"));
-      this.socket.on("extracted", this.updateStep("extracted"));
-      this.socket.on("sent", this.updateStep("sent"));
-      this.socket.on("generated", this.updateStep("generated"));
-      this.socket.on("parsed", this.updateStep("parsed"));
-      this.socket.on("fin", this.updateStep("fin"));
-
-      this.socket.on("case", this.caseParsed);
-
-      this.socket.on("generated", this.reportGenerated);
     },
     apollo: {
       languages: GET_LANGUAGES

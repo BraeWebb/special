@@ -56,3 +56,18 @@ query getReport($id: String!) {
     }
   }
 }`;
+
+export const GENERATE_REPORT = gql`
+mutation requestReport($title: String!,
+  $file: String!, $language: String!,
+	$maxCases: Int, $maxMatches: Int
+) {
+  requestReport(
+    title: $title, file: $file,
+    language: $language, maxCases: $maxCases,
+    maxMatches: $maxMatches
+  ) {
+    id
+  }
+}
+`;

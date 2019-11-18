@@ -4,7 +4,7 @@ import VueApollo from 'vue-apollo';
 import InvestigatePage from './views/InvestigatePage.vue';
 
 import { ApolloClient } from 'apollo-client';
-import { HttpLink } from 'apollo-link-http';
+import { createUploadLink } from 'apollo-upload-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 import { split } from 'apollo-link';
@@ -14,12 +14,15 @@ import { getMainDefinition } from 'apollo-utilities';
 Vue.use(SuiVue);
 Vue.use(VueApollo);
 
-const httpLink = new HttpLink({
-  uri: 'http://0.0.0.0:4000/graphql'
+const graphqlPort = process.env.VUE_APP_GRAPHQL_PORT || "";
+const graphql = window.location.hostname + ":" + graphqlPort + "/graphql";
+
+const httpLink = new createUploadLink({
+  uri: 'http://' + graphql
 });
 
 const wsLink = new WebSocketLink({
-  uri: 'ws://0.0.0.0:4000/graphql',
+  uri: 'ws://' + graphql,
   options: {
     reconnect: true,
   },

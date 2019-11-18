@@ -4,6 +4,7 @@ const typeDefs = gql`
   scalar Script
   scalar Time
   scalar Message
+  scalar Upload
 
   type Resource {
     group: String!
@@ -17,6 +18,12 @@ const typeDefs = gql`
     email: String
     groups: String
     resources: [Resource!]!
+  }
+  
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
   }
   
   type Language {
@@ -140,6 +147,7 @@ const typeDefs = gql`
   }
   
   type Mutation {
+    uploadSubmissions(file: Upload!): File!
     requestReport(title: String!, file: String!, language: String!, maxMatches: Int, maxCases: Int): Report!
     comment(report: String!, case: Int!, content: String!, line: Int, parent: ID): Comment!
     
@@ -160,6 +168,8 @@ const typeDefs = gql`
     newReports: Report
     
     queue(page: String!): QueuePage
+    
+    log: String
   }
 `;
 

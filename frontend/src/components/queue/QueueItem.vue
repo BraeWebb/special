@@ -28,8 +28,6 @@
     ],
     methods: {
       kickQueue(queue, user) {
-        console.log(user);
-        console.log(queue);
         this.$apollo.mutate({
           mutation: KICK_QUEUE,
           variables: {

@@ -8,11 +8,28 @@
 </template>
 
 <script>
+    import { LOG_SUBSCRIPTION } from '../../queries/files';
+
     export default {
-      props: ["logs"],
+      data() {
+        return {
+          logs: ["No logs yet..."]
+        }
+      },
       methods: {
         reverse: function (array) {
           return array.slice().reverse()
+        }
+      },
+      apollo: {
+        $subscribe: {
+          logs: {
+            query: LOG_SUBSCRIPTION,
+
+            result ({ data }) {
+              this.logs = [data.log, ...this.logs];
+            },
+          },
         }
       }
     }
