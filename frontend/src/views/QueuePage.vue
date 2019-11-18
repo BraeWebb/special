@@ -5,7 +5,6 @@
                 Queue
                 <sui-dropdown-menu>
                     <a class="ui item" href="/queue/">List</a>
-                    <a class="ui item" href="/queue/new">New</a>
                 </sui-dropdown-menu>
             </sui-dropdown>
 

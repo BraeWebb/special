@@ -12,16 +12,14 @@
             <h1>{{config.title}}</h1>
             {{config.description}}
           </sui-card-header>
-        </sui-card-content>
+          <br/>
+          <sui-button fluid positive attached="top" class="spring-green-button" @click="joinQueue(config.id)">
+            <sui-icon name="add" /> Join
+          </sui-button>
+          <sui-button fluid attached="bottom" color="red" @click="leaveQueue(config.id)">
+            <sui-icon name="minus" /> Leave
+          </sui-button>
 
-        <sui-button positive attached="bottom" class="spring-green-button" @click="joinQueue(config.id)">
-          <sui-icon name="add" /> Join
-        </sui-button>
-        <sui-button attached="bottom" color="red" @click="leaveQueue(config.id)">
-          <sui-icon name="minus" /> Leave
-        </sui-button>
-
-        <sui-card-content>
           <sui-table basic="very" celled>
             <sui-table-header>
               <tr>
