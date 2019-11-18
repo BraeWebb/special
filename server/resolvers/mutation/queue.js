@@ -55,13 +55,22 @@ async function join(args, user) {
   });
   let page = await queue.getPage();
 
+  let pages = await user.getJoined({
+    where: {
+      id: page.id
+    }
+  });
+
+  if (pages.length > 0) {
+    return false;
+  }
+
   let waiting = await Waiting.create({
     time: Date.now(),
   });
   await waiting.setUser(user);
   await queue.addWaiting(waiting);
-
-  console.log(waiting);
+  await user.addJoined(page);
 
   pubsub.publish(`UPDATE-QUEUE-${page.id}`, {
     queue: page,
@@ -86,6 +95,8 @@ async function leave(args, user) {
     }
   });
   let page = await queue.getPage();
+
+  await user.removeJoined(page);
 
   pubsub.publish(`UPDATE-QUEUE-${page.id}`, {
     queue: page,

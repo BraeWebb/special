@@ -45,6 +45,9 @@ Queue.hasMany(User, {as: "Admin", constraints: false});
 Queue.hasMany(Waiting, {as: "Waiting"});
 Waiting.belongsTo(User, {as: "User"});
 
+/* Queue pages a user has joined to prevent multiple queues being joined */
+User.hasMany(QueuePage, {as: "Joined"});
+
 db.sync();
 
 module.exports = {
