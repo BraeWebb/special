@@ -5,8 +5,8 @@
             {{report.generator.name}}
             <div class="detail">Generator</div>
         </a>
-        <a class="ui green image label">
-            {{report.url}}
+        <a class="ui green image label" :href="report.request.url" target="_blank">
+            {{report.request.url}}
             <div class="detail">URL</div>
         </a>
         <a class="ui blue image label">
@@ -38,6 +38,7 @@
 
             <tr v-for="row in report.cases"
                 v-bind:key="row.number">
+                <template v-if="row.student1 !== null && row.student2 !== null">
                 <td>{{row.number}}</td>
                 <td class="center aligned">{{row.student1.id}}</td>
                 <td :data-sort-value="row.student1.percent" class="center aligned">{{row.student1.percent}}%</td>
@@ -51,6 +52,7 @@
                         </button>
                     </a>
                 </td>
+                </template>
             </tr>
             </tbody>
         </table>

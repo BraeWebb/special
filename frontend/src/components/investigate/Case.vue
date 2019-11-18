@@ -17,17 +17,13 @@
             <div class="ui column">
                 <div class="ui segment">
                     <h3 class="ui header">{{item.student1.id}}<div class="ui label">{{item.student1.percent}}%</div></h3>
-                    <pre style="margin: 0px"><code class="java">
-{{item.student1.script}}
-                    </code></pre>
+                    <span v-html="item.student1.script"></span>
                 </div>
             </div>
             <div class="ui column">
                 <div class="ui segment">
                     <h3 class="ui header">{{item.student2.id}}<div class="ui label">{{item.student2.percent}}%</div></h3>
-                      <pre style="margin: 0px"><code class="java">
-{{item.student2.script}}
-                    </code></pre>
+                    <span v-html="item.student2.script"></span>
                 </div>
             </div>
         </div>

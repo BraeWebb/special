@@ -27,7 +27,10 @@
                         <i class="icon thermometer full"></i>
                     </div>
                 </div>
-                <UploadBox :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
+                <div class="column">
+                    <UploadBox :text="'Upload submissions zip'" @uploaded="fileUploaded"></UploadBox>
+                    <UploadBox :text="'Upload base files'" @uploaded="baseFilesUploaded"></UploadBox>
+                </div>
             </div>
             <sui-button class="ui fluid primary button attached"
                         :disabled="!(uploaded && report.language != null)"
@@ -61,7 +64,8 @@
           maxMatches: null,
           maxCases: null,
           title: "Untitled",
-          file: null
+          file: null,
+          base: null
         },
 
         steps: {
@@ -81,6 +85,10 @@
       fileUploaded(fileInfo) {
         this.uploaded = true;
         this.report.file = fileInfo.filename;
+      },
+
+      baseFilesUploaded(fileInfo) {
+        this.report.base = fileInfo.filename;
       },
 
       submitReport() {

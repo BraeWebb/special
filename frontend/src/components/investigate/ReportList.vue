@@ -17,7 +17,7 @@
                 <td>{{row.title}}</td>
                 <td>{{row.generator.name}}</td>
                 <td>
-                    <a :href="row.url" target="_blank">
+                    <a :href="row.request.url" target="_blank">
                         <button class="ui icon button" role="button">
                             <i class="globe right icon"></i>
                         </button>

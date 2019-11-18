@@ -59,11 +59,12 @@ query getReport($id: String!) {
 
 export const GENERATE_REPORT = gql`
 mutation requestReport($title: String!,
-  $file: String!, $language: String!,
+  $file: String!, $base: String
+  $language: String!,
 	$maxCases: Int, $maxMatches: Int
 ) {
   requestReport(
-    title: $title, file: $file,
+    title: $title, file: $file, base: $base,
     language: $language, maxCases: $maxCases,
     maxMatches: $maxMatches
   ) {

@@ -1,5 +1,5 @@
 <template>
-    <div class="column">
+    <div>
         <div class="ui segment attached" style="display: flex; align-items: center">
             <div v-if="!displayUpload" style="width: 100%;">
                 <span>{{file.name}}</span>
@@ -14,7 +14,7 @@
                 <input class="hide" type="file" id="file" ref="file" v-on:change="handleFileUpload"/>
             </label>
         </div>
-        <button class="ui button attached"
+        <button class="ui button fluid attached"
                 v-if="displayUpload"
                 v-on:click="upload">
             Upload
