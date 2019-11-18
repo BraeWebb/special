@@ -32,7 +32,7 @@ const QueueConfig = require("../schema/QueueConfig")(db, DataTypes);
 const Queue = require("../schema/Queue")(db, DataTypes);
 const Waiting = require("../schema/Waiting")(db, DataTypes);
 
-User.hasMany(QueuePage, {as: "QueuePages"});
+User.hasMany(QueuePage, {as: "QueuePages", foreignKey: "QueuePages"});
 QueuePage.belongsTo(User, {as: "User"});
 
 QueuePage.hasMany(Queue, {as: "Queues"});
@@ -46,7 +46,7 @@ Queue.hasMany(Waiting, {as: "Waiting"});
 Waiting.belongsTo(User, {as: "User"});
 
 /* Queue pages a user has joined to prevent multiple queues being joined */
-User.hasMany(QueuePage, {as: "Joined"});
+User.hasMany(QueuePage, {as: "Joined", foreignKey: "Joined"});
 
 db.sync();
 

@@ -82,12 +82,16 @@ async function join(args, user) {
 }
 
 async function leave(args, user) {
-  await Waiting.destroy({
+  let destroyed = await Waiting.destroy({
     where: {
       queueId: args.id,
       UserId: user.id
     }
   });
+
+  if (!destroyed) {
+    return false;
+  }
 
   let queue = await Queue.findOne({
     where: {
@@ -101,6 +105,40 @@ async function leave(args, user) {
   pubsub.publish(`UPDATE-QUEUE-${page.id}`, {
     queue: page,
     action: "LEAVE",
+    user: user
+  });
+
+  return true;
+}
+
+async function kick(args, user) {
+  let queue = await Queue.findOne({
+    where: {
+      id: args.queue
+    }
+  });
+
+  if (!(await queue.hasAdmin(user))) {
+    return false;
+  }
+
+  let destroyed = await Waiting.destroy({
+    where: {
+      queueId: args.queue,
+      UserId: args.user
+    }
+  });
+
+  if (!destroyed) {
+    return false;
+  }
+
+  let page = await queue.getPage();
+  await user.removeJoined(page);
+
+  pubsub.publish(`UPDATE-QUEUE-${page.id}`, {
+    queue: page,
+    action: "KICK",
     user: user
   });
 
@@ -188,6 +226,8 @@ async function configQueue(args, user) {
 module.exports = {
   joinQueue: (root, args, context) => join(args, context.currentUser),
   leaveQueue: (root, args, context) => leave(args, context.currentUser),
+  kickQueue: (root, args, context) => kick(args, context.currentUser),
+
   newQueuePage: (root, args, context) => createQueuePage(args, context.currentUser),
   newQueue: (root, args, context) => createQueue(args),
   configureQueue: (root, args, context) => configQueue(args, context.currentUser),

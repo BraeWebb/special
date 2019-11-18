@@ -19,8 +19,10 @@ query getQueue($id: String!) {
       id
       title
       description
+      isAdmin
       waiting {
         user {
+          id
           name
         }
         joined
@@ -37,8 +39,10 @@ subscription subQueue($id: String!) {
       id
       title
       description
+      isAdmin
       waiting {
         user {
+          id
           name
         }
         joined
@@ -93,6 +97,12 @@ mutation newQueue($page: String!, $title: String!) {
 }
 `;
 
+export const IS_ADMIN = gql`
+query isAdmin ($queue: String!) {
+  isAdmin (queue: $queue)
+}
+`;
+
 export const ADD_ADMIN = gql`
 mutation addAdmin ($user: String!, $queue: String!) {
   addAdmin (queue: $queue, user: $user)
@@ -123,5 +133,11 @@ mutation joinQueue($id: String!){
 export const LEAVE_QUEUE = gql`
 mutation leaveQueue($id: String!){
   leaveQueue(id: $id)
+}
+`;
+
+export const KICK_QUEUE = gql`
+mutation kickQueue($user: String!, $queue: String!){
+  kickQueue(user: $user, queue: $queue)
 }
 `;

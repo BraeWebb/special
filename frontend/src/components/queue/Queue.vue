@@ -48,7 +48,7 @@
 
 
 <script>
-  import { GET_QUEUE, GET_QUEUE_SUBSCRIPTION, JOIN_QUEUE, LEAVE_QUEUE } from "../../queries/queues";
+  import { IS_ADMIN, GET_QUEUE, GET_QUEUE_SUBSCRIPTION, JOIN_QUEUE, LEAVE_QUEUE } from "../../queries/queues";
   import QueueItem from "./QueueItem";
 
   let pathParts = window.location.pathname.split("/").filter((el) => {return el.length !== 0});

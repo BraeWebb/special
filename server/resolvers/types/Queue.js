@@ -18,7 +18,8 @@ module.exports = {
     page: queue => queue.getPage(),
     config: queue => queue.getConfig(),
     waiting: queue => queue.getWaiting(),
-    admins: queue => queue.getAdmin()
+    admins: queue => queue.getAdmin(),
+    isAdmin: (queue, _, context) => queue.hasAdmin(context.currentUser)
   },
   Waiting: {
     joined: waiting => waiting.time,

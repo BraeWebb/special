@@ -121,6 +121,7 @@ const typeDefs = gql`
     config: QueueConfig!
     waiting: [Waiting!]!
     admins: [User!]!
+    isAdmin: Boolean!
   }
   
   type Query {
@@ -135,7 +136,7 @@ const typeDefs = gql`
     
     queue(id: String!): Queue
     queuePage(id: String!): QueuePage
-    queuePages: [QueuePage!]! 
+    queuePages: [QueuePage!]!
   }
   
   type Mutation {
@@ -144,6 +145,7 @@ const typeDefs = gql`
     
     joinQueue(id: String!): Boolean
     leaveQueue(id: String!): Boolean
+    kickQueue(user: String!, queue: String!): Boolean
     
     newQueuePage(title: String!): QueuePage
     newQueue(title: String!, description: String, page: String): Queue
