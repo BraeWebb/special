@@ -13,7 +13,7 @@ function createNewUsers(user) {
         name: user.name,
         type: user.type,
         email: user.email,
-        groups: JSON.stringify(user.groups)
+        groups: user.groups
       });
     }
 

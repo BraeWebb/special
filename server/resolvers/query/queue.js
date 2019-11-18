@@ -8,8 +8,8 @@ function getQueuePage(id) {
   })
 }
 
-function getQueuePages() {
-  return QueuePage.findAll();
+function getQueuePages(user) {
+  return user.getQueuePages();
 }
 
 function getQueue(id) {
@@ -23,5 +23,5 @@ function getQueue(id) {
 module.exports = {
   queue: (root, args, context) => getQueue(args.id),
   queuePage: (root, args, context) => getQueuePage(args.id),
-  queuePages: (root, args, context) => getQueuePages(),
+  queuePages: (root, args, context) => getQueuePages(context.currentUser),
 };

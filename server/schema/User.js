@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) =>
       type: DataTypes.STRING
     },
     groups: {
-      type: DataTypes.STRING
+      type: DataTypes.ARRAY(DataTypes.TEXT)
     }
   }
 );

@@ -16,7 +16,7 @@ module.exports = {
     queue: {
       entry: 'src/queue.js',
       template: 'public/index.html',
-      filename: 'integrity/index.html',
+      filename: 'queue/index.html',
     }
   }
 };
