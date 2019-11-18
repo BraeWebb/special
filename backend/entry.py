@@ -40,27 +40,51 @@ def listen(client, subscriber, channel):
             extension = LANGUAGE_EXTENSIONS.get(language, language)
             submissions.extract(data['request']['file'], extension,
                                 out=os.path.join("data", data["id"]))
+            if data['request']['base'] is not None:
+                submissions.unpack(data['request']['base'], extension,
+                                   out=os.path.join("bases", data["id"]))
             client.publish(pub_channel, json.dumps({"step": "extracted"}))
 
             response = generate_report(data, console_logger,
                                        callback=lambda: client.publish(pub_channel, json.dumps({"step": "sent"})))
-            # response = moss.Report(request=data)
-            # response.url = "http://moss.stanford.edu/results/546069529"
+            client.publish("database", json.dumps({
+                "cmd": "Report.setUrl",
+                "id": id,
+                "url": response.url
+            }))
             client.publish(pub_channel, json.dumps({"step": "generated", "url": response.url}))
 
             parsed = parser.parse(response.url)
+            for case in parsed:
+                client.publish("database", json.dumps({
+                    "cmd": "Case.create",
+                    "report": id,
+                    "number": case["id"],
+                    "lines": case["lines"],
+                    "student1": case["student1"],
+                    "student2": case["student2"],
+                }))
             client.publish(pub_channel, json.dumps({"step": "parsed", "result": parsed}))
 
             graphs.gen_report(response.url, id)
+            client.publish(pub_channel, json.dumps({"step": "images"}))
 
             for case_id, case in parser.parse_cases(response.url, parsed):
-                client.publish("report:case",
-                               json.dumps({"user": data['user'],
-                                           "case": case,
-                                           "reportId": data["id"]}))
+                print(f"Parsed {case_id}")
+                client.publish("database",
+                               json.dumps({
+                                   "cmd": "Case.addScript",
+                                   "case": case,
+                                   "id": case_id,
+                                   "report": data["id"]}))
                 console_logger(f"Case {case_id} parsed.")
 
             client.publish(pub_channel, json.dumps({"step": "fin"}))
+            client.publish("database", json.dumps({
+                "cmd": "Report.setStatus",
+                "id": id,
+                "status": "GENERATED"
+            }))
 
             yield data['user'], response, data
 
@@ -79,7 +103,7 @@ def get_files(directory):
 def generate_report(data, logger, callback=None):
     report = data['report']
     request = data['request']
-    request = moss.ReportRequest(base_files=[],
+    request = moss.ReportRequest(base_files=get_files(os.path.join("bases", data["id"])),
                                  submissions=get_files(os.path.join("data", data["id"])),
                                  directory_mode=True,
                                  language=request['language'],
