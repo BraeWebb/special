@@ -11,6 +11,7 @@ const pubsub = new RedisPubSub();
 function createRequest(args) {
   return ReportRequest.create({
     file: args.file,
+    base: args.base,
     language: args.language,
     maxMatches: args.maxMatches,
     maxCases: args.maxCases

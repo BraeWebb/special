@@ -1,7 +1,3 @@
-/*
-This file is an absolute mess
- */
-
 const { RedisPubSub } = require('graphql-redis-subscriptions');
 
 const pubsub = new RedisPubSub();
@@ -51,52 +47,6 @@ module.exports = {
       return pubsub.asyncIterator(`STEP-${args.id}`)
     },
     resolve: async (payload, args) => {
-      // TODO: More hacky
-      if (payload.step === "generated" || payload.step === "parsed") {
-        let report = await Report.findOne({
-          where: {
-            id: args.id
-          }
-        });
-
-        if (payload.step === "generated") {
-          let request = await report.getRequest();
-          request.update({
-            url: payload.url
-          });
-        }
-
-        if (payload.step === "parsed") {
-          for (let i in payload.result) {
-            let data = payload.result[i];
-            createCase(data.id, data.lines).then(
-              item => {
-                item.setReport(report);
-                report.addCase(item);
-
-                StudentCase.create({
-                  student: data.student1.id,
-                  percent: data.student1.percent,
-                  script: ""
-                }).then(student => {
-                  student.setCase(item);
-                  item.addStudentCase(student);
-                });
-
-                StudentCase.create({
-                  student: data.student2.id,
-                  percent: data.student2.percent,
-                  script: ""
-                }).then(student => {
-                  student.setCase(item);
-                  item.addStudentCase(student);
-                });
-              }
-            );
-          }
-        }
-      }
-
       return payload;
     }
   }

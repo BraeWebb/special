@@ -94,8 +94,8 @@ const typeDefs = gql`
   type Case {
     number: Int!
     report: Report!
-    student1: StudentCase!
-    student2: StudentCase!
+    student1: StudentCase
+    student2: StudentCase
     lines: Int!
     matches: [Match!]!
     comments: [Comment!]!
@@ -149,7 +149,7 @@ const typeDefs = gql`
   
   type Mutation {
     uploadSubmissions(file: Upload!): File!
-    requestReport(title: String!, file: String!, language: String!, maxMatches: Int, maxCases: Int): Report!
+    requestReport(title: String!, file: String!, base: String, language: String!, maxMatches: Int, maxCases: Int): Report!
     comment(report: String!, case: Int!, content: String!, line: Int, parent: ID): Comment!
     
     joinQueue(id: String!): Boolean

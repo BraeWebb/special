@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) =>
       type: DataTypes.STRING,
       allowNull: false
     },
+    base: {
+      type: DataTypes.STRING,
+    },
     language: {
       type: DataTypes.STRING,
       allowNull: false

@@ -21,8 +21,7 @@ Report.belongsTo(User, {as: "User", constraints: false});
 Report.hasMany(Case, {as: "Cases", constraints: false});
 Case.belongsTo(Report);
 
-Case.hasMany(StudentCase, {as: "StudentCases", constraints: false});
-StudentCase.belongsTo(Case);
+Case.hasMany(StudentCase, {as: "StudentCases"});
 
 /**
  * Queue system related data
