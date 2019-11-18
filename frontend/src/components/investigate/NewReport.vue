@@ -40,7 +40,7 @@
 
 <script>
   import { GET_LANGUAGES } from '../../queries/languages';
-  import { GENERATE_REPORT } from '../../queries/reports';
+  import { GENERATE_REPORT, STEP_SUBSCRIPTION } from '../../queries/reports';
   import UploadBox from '../UploadBox';
   import NewReportSteps from '../investigate/NewReportSteps';
 
@@ -67,7 +67,6 @@
         steps: {
           cases: 0,
           started: false,
-          queued: false,
           accepted: false,
           extracted: false,
           sent: false,
@@ -81,7 +80,6 @@
     methods: {
       fileUploaded(fileInfo) {
         this.uploaded = true;
-        console.log(fileInfo);
         this.report.file = fileInfo.filename;
       },
 
@@ -91,26 +89,42 @@
           mutation: GENERATE_REPORT,
           variables: this.report
         }).then(data => {
-          console.log(data);
+          this.subToSteps(data.data.requestReport);
         });
       },
 
-      reportGenerated(data) {
-        this.result = data;
+      subToSteps(data) {
+        const observer = this.$apollo.subscribe({
+          query: STEP_SUBSCRIPTION,
+          variables: {
+            id: data.id
+          }
+        });
+
+        let state = this;
+
+        observer.subscribe({
+          next (data) {
+            data = data.data.steps;
+
+            if (data.step === "generated") {
+              state.result = data.url
+            }
+
+            state.steps[data.step] = true
+          },
+          error (error) {
+            console.error(error)
+          },
+        })
       },
 
       caseParsed(data) {
         this.steps.cases += 1;
-      },
-
-      updateStep(step) {
-        return (data) => {
-          this.steps[step] = true;
-        };
       }
     },
     apollo: {
-      languages: GET_LANGUAGES
+      languages: GET_LANGUAGES,
     }
   }
 </script>

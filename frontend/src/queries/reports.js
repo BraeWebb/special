@@ -71,3 +71,9 @@ mutation requestReport($title: String!,
   }
 }
 `;
+
+export const STEP_SUBSCRIPTION = gql`
+subscription subscribeToSteps($id: String!) {
+  steps(id: $id)
+}
+`;

@@ -20,6 +20,8 @@ def extract(path, ext, out="out"):
             # get the student number
             print(file)
             matches = re.search("(s[0-9]{6,7})", file)
+            if matches is None:
+                continue
             student = matches.group(0)
             if not file.endswith(ext):
                 continue

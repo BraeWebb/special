@@ -28,30 +28,27 @@ def listen(client, subscriber, channel):
 
             data = json.loads(message['data'])
 
-            console_logger = lambda msg: client.publish("report:log", json.dumps({
-                "msg": msg,
-                "user": data["user"]
-            }))
-            print(data)
-            client.publish("report:accepted", json.dumps(data))
+            id = data["report"]["id"]
+            pub_channel = "STEP-" + id
+            log_channel = "LOGS-" + data["user"]["id"]
 
-            language = data['report']['language']
+            console_logger = lambda msg: client.publish(log_channel, msg)
+            client.publish(pub_channel, json.dumps({"step": "accepted"}))
+
+            language = data['request']['language']
             extension = LANGUAGE_EXTENSIONS.get(language, language)
-            submissions.extract(data['report']['path'], extension,
+            submissions.extract(data['request']['file'], extension,
                                 out=os.path.join("data", data["id"]))
-            client.publish("report:extracted", json.dumps(data))
+            client.publish(pub_channel, json.dumps({"step": "extracted"}))
 
             response = generate_report(data, console_logger,
-                                       callback=lambda: client.publish("report:sent", json.dumps(data)))
+                                       callback=lambda: client.publish(pub_channel, json.dumps({"step": "sent"})))
             # response = moss.Report(request=data)
-            # response.url = "http://moss.stanford.edu/results/853274249"
-            client.publish("report:generated",
-                           json.dumps({"user": data['user'],
-                                       "report": response.url,
-                                       "request": data}))
+            # response.url = "http://moss.stanford.edu/results/546069529"
+            client.publish(pub_channel, json.dumps({"step": "generated", "url": response.url}))
 
             parsed = parser.parse(response.url)
-            client.publish("report:parsed",
+            client.publish(pub_channel, json.dumps({"step": "parsed", "result": parsed}))
                            json.dumps({"user": data['user'],
                                        "cases": parsed,
                                        "reportId": data["id"]}))
@@ -62,6 +59,8 @@ def listen(client, subscriber, channel):
                                            "case": case,
                                            "reportId": data["id"]}))
                 console_logger(f"Case {case_id} parsed.")
+
+            client.publish(pub_channel, json.dumps({"step": "fin"}))
 
             yield data['user'], response, data
 
@@ -79,12 +78,13 @@ def get_files(directory):
 
 def generate_report(data, logger, callback=None):
     report = data['report']
+    request = data['request']
     request = moss.ReportRequest(base_files=[],
                                  submissions=get_files(os.path.join("data", data["id"])),
                                  directory_mode=True,
-                                 language=report['language'],
-                                 max_matches=report['maxMatches'],
-                                 max_cases=report['maxCases'],
+                                 language=request['language'],
+                                 max_matches=request['maxMatches'],
+                                 max_cases=request['maxCases'],
                                  comment=report['title'])
     report = moss.Report.make_request(request, logger=logger, sent_callback=callback)
 
@@ -97,8 +97,6 @@ def main():
 
     for user, report, data in listen(client, subscriber, "report"):
         print("Report Generated")
-        client.publish("report:fin",
-                       json.dumps({"user": user}))
 
 
 if __name__ == '__main__':

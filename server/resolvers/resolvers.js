@@ -8,6 +8,8 @@ const File = require("./types/File");
 
 const Queue = require("./types/Queue");
 
+const { JSON } = require('graphql-type-json');
+
 const Query = require("./Query");
 const Mutation = require("./Mutation");
 const Subscription = require("./Subscription");
@@ -19,6 +21,7 @@ module.exports = lodash.merge(
   StudentCase,
   File,
   Queue,
+  JSON,
   Query,
   Mutation,
   Subscription

@@ -5,6 +5,7 @@ const typeDefs = gql`
   scalar Time
   scalar Message
   scalar Upload
+  scalar JSON
 
   type Resource {
     group: String!
@@ -170,6 +171,7 @@ const typeDefs = gql`
     queue(page: String!): QueuePage
     
     log: String
+    steps(id: String!): JSON
   }
 `;
 

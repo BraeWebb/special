@@ -1,12 +1,6 @@
 <template>
     <div v-if="steps.started">
         <div class="ui ordered vertical steps">
-            <div class="step" v-bind:class="{completed: steps.queued}">
-                <div class="content">
-                    <div class="title">Job Queued</div>
-                    <div class="description">Waiting for processor to accept</div>
-                </div>
-            </div>
             <div class="step" v-bind:class="{completed: steps.accepted}">
                 <div class="content">
                     <div class="title">Job Started</div>

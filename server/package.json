@@ -13,6 +13,7 @@
     "fs": "0.0.1-security",
     "graphql": "^14.5.8",
     "graphql-redis-subscriptions": "^2.1.1",
+    "graphql-type-json": "^0.3.0",
     "lodash": "^4.17.15",
     "pg": "^7.12.1",
     "progress-stream": "^2.0.0",

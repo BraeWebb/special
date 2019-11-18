@@ -1,5 +1,6 @@
 const progress = require('progress-stream');
 const fs = require("fs");
+const path = require("path");
 const Promise = require("bluebird");
 
 const { RedisPubSub } = require('graphql-redis-subscriptions');
@@ -8,6 +9,7 @@ const pubsub = new RedisPubSub();
 
 async function uploadSubmissions(args, user) {
   let file = await args.file;
+  let filepath = path.resolve(`uploaded/${user.id}-${file.filename}`);
 
   let progressStream = progress();
 
@@ -16,9 +18,11 @@ async function uploadSubmissions(args, user) {
   });
 
   let stream = file.createReadStream();
-  let outStream = fs.createWriteStream(`uploaded/${user.id}-${file.filename}`);
+  let outStream = fs.createWriteStream(filepath);
 
   stream.pipe(progressStream).pipe(outStream);
+
+  file.filename = filepath;
 
   return new Promise(function(resolve, reject) {
     stream.on('end', () => resolve(file));

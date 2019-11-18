@@ -1,6 +1,6 @@
 <template>
     <div class="ui fluid attached container inverted segment" style="text-align:left">
-        <p v-for="(log, index) in reverse(logs)"
+        <p v-for="(log, index) in logs"
            :key="index">
             {{log}}
         </p>
