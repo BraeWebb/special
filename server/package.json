@@ -17,7 +17,7 @@
     "lodash": "^4.17.15",
     "pg": "^7.12.1",
     "progress-stream": "^2.0.0",
-    "redis": "^2.8.0",
+    "redis": "^3.1.1",
     "sequelize": "^5.21.2",
     "uqsso": "^1.0.0"
   }
