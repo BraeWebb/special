@@ -9,7 +9,7 @@
   "author": "Brae Webb",
   "license": "ISC",
   "dependencies": {
-    "apollo-server": "^2.9.7",
+    "apollo-server": "^2.25.3",
     "graphql": "^14.5.8",
     "uqsso": "^1.0.0"
   }
